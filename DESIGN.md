@@ -59,14 +59,18 @@ Se usan como cualquier color de Tailwind (`bg-surface-card`, `bg-surface-raised/
 
 ## Tipografía
 
-Dos familias, cargadas desde Google Fonts en [`src/index.css`](src/index.css) y declaradas como tokens en el bloque `@theme`:
+Dos familias variables **alojadas en el propio proyecto**, importadas en [`src/main.tsx`](src/main.tsx) vía `@fontsource-variable` y declaradas como tokens en el `@theme` de [`src/index.css`](src/index.css):
 
 ```css
---font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
---font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+--font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+--font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 ```
 
-**Inter** (300–700) para títulos y prosa. **JetBrains Mono** (400–600) para todo lo demás.
+**El sufijo `Variable` es obligatorio**: es el nombre con el que `@fontsource-variable` registra la familia. Sin él la página cae en silencio a fuentes del sistema, sin error visible. Los nombres planos quedan detrás como respaldo para copias instaladas localmente.
+
+**Inter** (100–900) para títulos y prosa. **JetBrains Mono** (100–800) para todo lo demás.
+
+Cada paquete declara todos sus subconjuntos, pero con `unicode-range`: el navegador **solo descarga el latino**, unos **87 KB** entre las dos familias. No hay ninguna petición a dominios externos.
 
 ### Cuándo usar cada una
 
@@ -171,6 +175,6 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 ## Deuda conocida
 
-- Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 upstream: el navegador sintetiza esa diferencia. Se carga el 800 como cara más cercana; eliminarla del todo exigiría bajar las píldoras a `font-extrabold`.
-- Las fuentes se cargan por `@import` desde el CDN de Google, lo que bloquea el render inicial y añade una dependencia externa; alojarlas localmente sería más rápido y robusto.
+- Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 —también en su versión variable—, así que el navegador sintetiza esa diferencia. Eliminarla exigiría bajar las píldoras a `font-extrabold`.
+- Los caracteres `➔` y `✖` quedan fuera del subconjunto latino, así que se renderizan con una fuente del sistema. Ya ocurría con Google Fonts; sustituirlos por iconos de Lucide lo resolvería.
 - El tema y el idioma no persisten entre recargas ni leen `prefers-color-scheme`.
