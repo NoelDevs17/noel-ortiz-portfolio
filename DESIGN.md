@@ -47,6 +47,8 @@ Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el ic
 
 Esta lista es la fuente única de color de marca: la consumen tanto la marquesina de Skills como los chips de Projects. **Añadir una tecnología aquí la hace aparecer en ambas**, así que es también una declaración de competencias, no solo un color.
 
+**Al añadir un badge, elige el `text` midiendo, no a ojo.** El fondo es color de marca y no se toca, pero el texto es decisión nuestra y debe alcanzar 4.5:1 sobre ese fondo. La regla práctica: los fondos claros o saturados —cian, naranja, verde medio— piden `text-black`; los oscuros, `text-white`. El `dotBg` acompaña al texto. Los 32 badges actuales cumplen, con el mínimo en 4.51:1.
+
 ### Superficies oscuras
 
 La escala slate salta de **L\* 1.9** (`slate-950`) a **L\* 8.0** (`slate-900`), sin escalones intermedios. Las superficies anidadas del tema oscuro necesitan ese rango, así que hay tres tokens propios declarados en `@theme`:
@@ -192,4 +194,3 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 - Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 —también en su versión variable—, así que el navegador sintetiza esa diferencia. Eliminarla exigiría bajar las píldoras a `font-extrabold`.
 - Los caracteres `➔` y `✖` quedan fuera del subconjunto latino, así que se renderizan con una fuente del sistema. Ya ocurría con Google Fonts; sustituirlos por iconos de Lucide lo resolvería.
-- **10 de los 32 badges de tecnología no llegan al 4.5:1** de contraste texto/fondo: `TAILWIND CSS` (2.43:1), `CLEAN ARCHITECTURE` (2.54), `GITLAB` (2.86), `RABBITMQ` (2.94), `DOCKER` (3.15), `GIT` (3.56), `HTML5` (3.88), `C#` (4.08), `MICROSERVICES` (4.10) y `NESTJS` (4.30). El fondo es color de marca y no se toca, pero el `text` sí es decisión nuestra: pasar los más claros a `text-black` lo arregla sin alterar la identidad de cada tecnología.
