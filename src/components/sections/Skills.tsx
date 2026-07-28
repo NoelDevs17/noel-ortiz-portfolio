@@ -108,7 +108,7 @@ export function Skills({ lang, isDark }: SkillsProps) {
         <div
           className={`relative overflow-hidden rounded-3xl border p-6 sm:p-8 transition-all ${
             isDark
-              ? "bg-[#0a0c14] border-slate-900/60 shadow-xl"
+              ? "bg-surface-card border-slate-900/60 shadow-xl"
               : "bg-white border-slate-200/60 shadow-xs"
           }`}
         >
@@ -225,7 +225,7 @@ export function Skills({ lang, isDark }: SkillsProps) {
         <div
           className={`p-6 rounded-3xl border transition-all ${
             isDark
-              ? "bg-[#0a0c14]/50 border-slate-900/60"
+              ? "bg-surface-card/50 border-slate-900/60"
               : "bg-white border-slate-200/50 shadow-xs"
           }`}
         >

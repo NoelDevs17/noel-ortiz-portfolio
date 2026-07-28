@@ -128,19 +128,19 @@ function ContactCard({
 }: ContactCardProps) {
   const cardCls = `p-6 md:p-8 rounded-2xl border flex flex-col justify-between transition-all group ${
     isDark
-      ? "bg-[#0b0c10]/90 border-slate-800/60 hover:border-slate-700/80 hover:shadow-lg hover:shadow-black/20"
+      ? "bg-surface-card/90 border-slate-800/60 hover:border-slate-700/80 hover:shadow-lg hover:shadow-black/20"
       : "bg-white border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md"
   }`;
 
   const iconWrapCls = `p-3 rounded-xl border flex items-center justify-center shrink-0 ${
     isDark
-      ? "bg-[#141622] border-slate-800/80 text-slate-300 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-colors"
+      ? "bg-slate-900 border-slate-800/80 text-slate-300 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-colors"
       : "bg-slate-50 border-slate-200 text-slate-700 group-hover:text-emerald-600 group-hover:border-emerald-300 transition-colors"
   }`;
 
   const copyBtnCls = `flex-1 py-2.5 px-4 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 border cursor-pointer ${
     isDark
-      ? "bg-[#12141c] hover:bg-[#1a1c29] border-slate-800 text-slate-300 active:bg-slate-950"
+      ? "bg-surface-raised hover:bg-surface-raised-hover border-slate-800 text-slate-300 active:bg-slate-950"
       : "bg-slate-50 hover:bg-slate-100 border-slate-300 text-slate-700 active:bg-slate-200"
   }`;
 

@@ -16,7 +16,7 @@ export function Footer({ lang, isDark }: FooterProps) {
           : "border-slate-200 bg-white text-slate-600"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2.5">
         <span>{t.footer}</span>
       </div>
     </footer>

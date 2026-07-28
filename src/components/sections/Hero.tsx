@@ -39,11 +39,11 @@ export function Hero({
   return (
     <section
       id="hero"
-      className={`relative min-h-[85vh] flex items-center py-12 md:py-24 border-b overflow-hidden print:hidden transition-colors ${
+      className={`relative min-h-[85vh] flex items-center py-16 md:py-24 border-b overflow-hidden print:hidden transition-colors max-w-7xl mx-auto px-4 sm:px-6 ${
         isDark ? "border-slate-900/60" : "border-slate-200"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
         {/* Left: Name + CTA */}
         <div className="lg:col-span-7 space-y-6 text-center lg:text-left">

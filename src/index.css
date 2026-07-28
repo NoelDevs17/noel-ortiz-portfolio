@@ -1,9 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Weights are loaded only where the code actually asks for them. Note that
+   JetBrains Mono tops out at 800 upstream: the tech pills request 900
+   (font-black), so 800 is the closest real face the browser can use. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Dark-theme surfaces. The slate scale jumps from L* 1.9 (slate-950) to
+     L* 8.0 (slate-900); these three fill that gap so nested surfaces keep a
+     readable hierarchy. Do not swap them for slate — it collapses four steps
+     of luminance into two. */
+  --color-surface-card: #0b0c10;
+  --color-surface-raised: #12141c;
+  --color-surface-raised-hover: #1a1c29;
   --animate-marquee: marquee 110s linear infinite;
   --animate-marquee-reverse: marquee-reverse 110s linear infinite;
 

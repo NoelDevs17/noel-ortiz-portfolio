@@ -40,9 +40,17 @@ El amarillo aparece una sola vez, en el icono de sol del selector de tema, donde
 
 [`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además `text` y `dotBg` para garantizar contraste sobre su propio fondo.
 
-### Grises arbitrarios
+### Superficies oscuras
 
-[`Skills.tsx`](src/components/sections/Skills.tsx) y [`Contact.tsx`](src/components/sections/Contact.tsx) usan cinco hex fuera de la escala (`#0a0c14`, `#0b0c10`, `#12141c`, `#141622`, `#1a1c29`) para superficies oscuras algo más profundas que `slate-950`. Funcionan, pero son deuda del sistema: si necesitas un tono así, reutiliza uno de esos cinco antes de inventar el sexto.
+La escala slate salta de **L\* 1.9** (`slate-950`) a **L\* 8.0** (`slate-900`), sin escalones intermedios. Las superficies anidadas del tema oscuro necesitan ese rango, así que hay tres tokens propios declarados en `@theme`:
+
+| Token | Hex | L\* | Uso |
+|---|---|---|---|
+| `surface-card` | `#0b0c10` | 3.4 | Fondo de tarjeta sobre `slate-950` |
+| `surface-raised` | `#12141c` | 6.4 | Elemento elevado dentro de una tarjeta |
+| `surface-raised-hover` | `#1a1c29` | 10.6 | Estado *hover* del anterior |
+
+Se usan como cualquier color de Tailwind (`bg-surface-card`, `bg-surface-raised/50`). **No los sustituyas por `slate`**: colapsaría cuatro escalones de luminancia en dos y aplanaría la jerarquía de las tarjetas. Si necesitas un tono nuevo en ese rango, añade un token aquí en vez de un hex suelto.
 
 ## Tipografía
 
@@ -76,8 +84,8 @@ Las etiquetas en mayúsculas llevan siempre `tracking-wider` o `tracking-widest`
 
 ## Layout
 
-**Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6` en todas las secciones.
-**Ritmo vertical:** `py-16 md:py-24`, con `border-b` entre secciones.
+**Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6`, aplicado **sobre el propio `<section>`** —no sobre un `div` interno— para que el borde inferior y el contenido compartan ancho. El Header y el Footer repiten el mismo contenedor.
+**Ritmo vertical:** `py-16 md:py-24` en las seis secciones, con `border-b` entre ellas. Contact no lo lleva por ser la última antes del pie.
 
 **Patrón de dos columnas** — la estructura dominante (About, Experience, Contact):
 
@@ -158,6 +166,6 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 ## Deuda conocida
 
-- Los cinco grises arbitrarios descritos arriba deberían consolidarse como tokens en `@theme`.
+- Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 upstream: el navegador sintetiza esa diferencia. Se carga el 800 como cara más cercana; eliminarla del todo exigiría bajar las píldoras a `font-extrabold`.
 - Las fuentes se cargan por `@import` desde el CDN de Google, lo que bloquea el render inicial y añade una dependencia externa; alojarlas localmente sería más rápido y robusto.
 - El tema y el idioma no persisten entre recargas ni leen `prefers-color-scheme`.
