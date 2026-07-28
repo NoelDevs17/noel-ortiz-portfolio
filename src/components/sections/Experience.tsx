@@ -24,7 +24,7 @@ export function Experience({ lang, isDark }: ExperienceProps) {
         <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
           <div
             className={`flex items-center space-x-2 ${
-              isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
             }`}
           >
             <Briefcase className="w-4 h-4" />
@@ -57,8 +57,8 @@ export function Experience({ lang, isDark }: ExperienceProps) {
                 <div
                   className={`absolute -left-[21px] md:-left-[37px] top-1.5 w-3 h-3 rounded-full border-2 group-hover:scale-125 transition-all ${
                     isDark
-                      ? "bg-slate-950 border-emerald-400"
-                      : "bg-white border-emerald-600"
+                      ? "bg-slate-950 border-blue-400"
+                      : "bg-white border-blue-600"
                   }`}
                 />
 
@@ -107,7 +107,7 @@ export function Experience({ lang, isDark }: ExperienceProps) {
                       >
                         <span
                           className={`font-mono text-[11px] mt-1 ${
-                            isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+                            isDark ? "text-blue-400" : "text-blue-600 font-semibold"
                           }`}
                         >
                           ➔

@@ -41,7 +41,7 @@ export function Skills({ lang, isDark }: SkillsProps) {
         <div>
           <div
             className={`flex items-center space-x-2 mb-2 ${
-              isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
             }`}
           >
             <Code2 className="w-4 h-4 animate-pulse" />
@@ -134,12 +134,12 @@ export function Skills({ lang, isDark }: SkillsProps) {
                     : "bg-slate-50 border-slate-200"
                 }`}
               >
-                <Layers className="w-5 h-5 text-emerald-500" />
+                <Layers className="w-5 h-5 text-blue-500" />
               </div>
               <div>
                 <span
                   className={`text-[10px] font-mono font-bold tracking-widest uppercase block ${
-                    isDark ? "text-emerald-400" : "text-emerald-600"
+                    isDark ? "text-blue-400" : "text-blue-600"
                   }`}
                 >
                   {t.skills.allTech}
@@ -210,8 +210,8 @@ export function Skills({ lang, isDark }: SkillsProps) {
                   onClick={() => setSearchQuery("")}
                   className={`mt-4 px-4 py-2 rounded-full font-mono text-xs font-bold border transition-colors ${
                     isDark
-                      ? "bg-slate-950 border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/30"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:text-emerald-600"
+                      ? "bg-slate-950 border-slate-800 text-slate-300 hover:text-blue-400 hover:border-blue-500/30"
+                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
                   }`}
                 >
                   {t.skills.all}
@@ -258,8 +258,8 @@ export function Skills({ lang, isDark }: SkillsProps) {
                 <span
                   className={`font-mono text-[10px] px-2.5 py-0.5 rounded-lg border ${
                     isDark
-                      ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/10"
-                      : "text-emerald-700 bg-emerald-50 border-emerald-200"
+                      ? "text-slate-300 bg-slate-800/40 border-slate-700/50"
+                      : "text-slate-600 bg-slate-100 border-slate-200"
                   }`}
                 >
                   {l.level}

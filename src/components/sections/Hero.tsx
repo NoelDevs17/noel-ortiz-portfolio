@@ -102,8 +102,8 @@ export function Hero({
               onClick={() => scrollToSection("contact")}
               className={`px-6 py-3 text-xs font-mono font-semibold rounded-xl border transform hover:-translate-y-0.5 transition-all uppercase tracking-wider ${
                 isDark
-                  ? "border-slate-800 bg-slate-900/60 text-slate-200 hover:text-emerald-400 hover:border-emerald-500/40"
-                  : "border-slate-200 bg-white text-slate-700 hover:text-emerald-600 hover:border-emerald-500/40 shadow-xs"
+                  ? "border-slate-800 bg-slate-900/60 text-slate-200 hover:text-blue-400 hover:border-blue-500/40"
+                  : "border-slate-200 bg-white text-slate-700 hover:text-blue-600 hover:border-blue-500/40 shadow-xs"
               }`}
             >
               {t.hero.ctaContact}

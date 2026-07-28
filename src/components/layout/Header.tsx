@@ -62,7 +62,7 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
             </span>
             <span
               className={`font-mono text-sm font-semibold block mt-0.5 ${
-                isDark ? "text-emerald-400" : "text-emerald-600"
+                isDark ? "text-blue-400" : "text-blue-600"
               }`}
             >
               NOEL_ORTIZ
@@ -97,8 +97,8 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
             onClick={() => window.print()}
             className={`flex items-center space-x-2 text-xs font-mono px-3 py-1.5 rounded-lg border transition-all ${
               isDark
-                ? "border-slate-800 bg-slate-900/60 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40"
-                : "border-slate-200 bg-white text-slate-700 hover:text-emerald-600 hover:border-emerald-500/40 shadow-xs"
+                ? "border-slate-800 bg-slate-900/60 text-slate-300 hover:text-blue-400 hover:border-blue-500/40"
+                : "border-slate-200 bg-white text-slate-700 hover:text-blue-600 hover:border-blue-500/40 shadow-xs"
             }`}
           >
             <FileDown className="w-3.5 h-3.5" />
@@ -172,7 +172,7 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
                     setMobileMenuOpen(false);
                   }}
                   className={`flex items-center space-x-1.5 text-xs font-mono ${
-                    isDark ? "text-emerald-400" : "text-emerald-600"
+                    isDark ? "text-blue-400" : "text-blue-600"
                   }`}
                 >
                   <FileDown className="w-3.5 h-3.5" />
@@ -210,8 +210,8 @@ function LangToggle({ lang, setLang, isDark, size }: LangToggleProps) {
           className={`${px} ${fontSize} font-mono rounded transition-all uppercase ${
             lang === l
               ? isDark
-                ? "bg-emerald-500 text-slate-950 font-bold"
-                : "bg-emerald-600 text-white font-bold"
+                ? "bg-blue-500 text-slate-950 font-bold"
+                : "bg-blue-600 text-white font-bold"
               : isDark
               ? "text-slate-400"
               : "text-slate-500"

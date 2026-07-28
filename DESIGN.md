@@ -27,14 +27,19 @@ El neutro es la escala **slate** de Tailwind, elegida sobre el gris puro por su 
 
 ### Acentos
 
-Dos acentos, con roles separados que conviene respetar:
+Una sola regla ordena todo el color del sistema:
 
-- **Azul** (`blue-600` claro / `blue-400` oscuro) — identidad y acción primaria. Botón principal del Hero, logo, eyebrows de categoría, avatar.
-- **Esmeralda** (`emerald-600` claro / `emerald-400` oscuro) — navegación y confirmación. Numeración de secciones, estados *hover*, feedback de "copiado", idioma activo.
+> **El azul es marca. El ámbar y el esmeralda son estado.**
 
-En modo oscuro los acentos suben un escalón (600 → 400) para conservar contraste sobre el fondo casi negro. **No inviertas los roles**: el azul nunca marca un hover, la esmeralda nunca es el CTA principal.
+- **Azul** (`blue-600` claro / `blue-400` oscuro) — **marca, y no significa nada**. Identidad, navegación, numeración de secciones, CTAs, enlaces, *hover*, anillo de foco. Si un elemento es azul, es porque pertenece a la marca; nunca porque comunique una condición.
+- **Ámbar** (`amber-400` oscuro / `amber-700` claro) — **en curso**. Estudios y certificaciones sin terminar.
+- **Esmeralda** (`emerald-400` oscuro / `emerald-700` claro) — **completado o confirmado**. Titulaciones terminadas y el feedback de "copiado".
 
-El amarillo aparece una sola vez, en el icono de sol del selector de tema, donde es literal más que decorativo.
+En oscuro los acentos suben de escalón para conservar contraste sobre el fondo casi negro; en claro los estados bajan a `700` —no `600`— porque `amber-600` sobre `amber-50` da 3.07:1 y no alcanza el 4.5:1 exigido a texto.
+
+**La regla al añadir color:** si el elemento comunica una condición, usa ámbar o esmeralda; en cualquier otro caso, azul. Un estado nunca decora, y la marca nunca informa.
+
+Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el icono de sol del selector de tema, y el tercer punto del semáforo de ventana en el Hero, que es rojo/amarillo/verde por convención de sistema operativo.
 
 ### Colores de marca
 

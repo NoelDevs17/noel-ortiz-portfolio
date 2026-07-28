@@ -24,7 +24,7 @@ export function About({ lang, isDark }: AboutProps) {
         <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
           <div
             className={`flex items-center space-x-2 ${
-              isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
             }`}
           >
             <Terminal className="w-4 h-4" />
@@ -58,8 +58,8 @@ export function About({ lang, isDark }: AboutProps) {
                 key={idx}
                 className={`border-l-2 pl-4 py-1 transition-all ${
                   isDark
-                    ? "border-slate-800 hover:border-emerald-500"
-                    : "border-slate-200 hover:border-emerald-600"
+                    ? "border-slate-800 hover:border-blue-500"
+                    : "border-slate-200 hover:border-blue-600"
                 }`}
               >
                 {p}
@@ -78,18 +78,14 @@ export function About({ lang, isDark }: AboutProps) {
                     : "bg-white border-slate-200 shadow-sm hover:border-blue-600/30 hover:bg-slate-50/40 hover:shadow-xs"
                 }`}
               >
-                <span
-                  className={`font-mono text-[10px] block mb-1 uppercase tracking-widest ${
-                    isDark ? "text-blue-400" : "text-blue-600"
-                  }`}
-                >
+                <span className="font-mono text-[10px] block mb-1 uppercase tracking-widest text-slate-500">
                   Philosophy {idx + 1}
                 </span>
                 <h4
                   className={`text-sm font-bold transition-all mb-2 ${
                     isDark
-                      ? "text-slate-100 group-hover:text-emerald-400"
-                      : "text-slate-900 group-hover:text-emerald-700"
+                      ? "text-slate-100 group-hover:text-blue-400"
+                      : "text-slate-900 group-hover:text-blue-700"
                   }`}
                 >
                   {val.title}
@@ -120,8 +116,8 @@ export function About({ lang, isDark }: AboutProps) {
                   key={idx}
                   className={`px-3 py-1.5 text-xs font-mono rounded-lg border transition-all ${
                     isDark
-                      ? "bg-slate-950 border-slate-900 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/20"
-                      : "bg-white border-slate-200 text-slate-600 hover:text-emerald-700 hover:border-emerald-400 hover:shadow-xs"
+                      ? "bg-slate-950 border-slate-900 text-slate-400 hover:text-blue-400 hover:border-blue-500/20"
+                      : "bg-white border-slate-200 text-slate-600 hover:text-blue-700 hover:border-blue-400 hover:shadow-xs"
                   }`}
                 >
                   {strength}

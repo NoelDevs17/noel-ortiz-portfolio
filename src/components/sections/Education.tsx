@@ -24,7 +24,7 @@ export function Education({ lang, isDark }: EducationProps) {
         <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
           <div
             className={`flex items-center space-x-2 ${
-              isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
             }`}
           >
             <GraduationCap className="w-4 h-4" />
@@ -89,8 +89,8 @@ export function Education({ lang, isDark }: EducationProps) {
                     className={`px-2 py-0.5 rounded-lg border ${
                       edu.status.en === "In Progress"
                         ? isDark
-                          ? "bg-blue-500/10 border-blue-500/10 text-blue-400"
-                          : "bg-blue-50 border-blue-200 text-blue-700"
+                          ? "bg-amber-500/10 border-amber-500/10 text-amber-400"
+                          : "bg-amber-50 border-amber-200 text-amber-700"
                         : isDark
                         ? "bg-emerald-500/10 border-emerald-500/10 text-emerald-400"
                         : "bg-emerald-50 border-emerald-200 text-emerald-700"
@@ -152,8 +152,8 @@ export function Education({ lang, isDark }: EducationProps) {
                       <span
                         className={`px-2 py-0.5 rounded-lg border ${
                           isDark
-                            ? "bg-blue-500/15 text-blue-400 border-blue-500/10"
-                            : "bg-blue-50 text-blue-700 border-blue-200"
+                            ? "bg-amber-500/15 text-amber-400 border-amber-500/10"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
                         }`}
                       >
                         {cert.status[lang]}

@@ -31,7 +31,7 @@ export function Contact({
         <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
           <div
             className={`flex items-center space-x-2 ${
-              isDark ? "text-emerald-400" : "text-emerald-600 font-semibold"
+              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
             }`}
           >
             <Mail className="w-4 h-4" />
@@ -134,8 +134,8 @@ function ContactCard({
 
   const iconWrapCls = `p-3 rounded-xl border flex items-center justify-center shrink-0 ${
     isDark
-      ? "bg-slate-900 border-slate-800/80 text-slate-300 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-colors"
-      : "bg-slate-50 border-slate-200 text-slate-700 group-hover:text-emerald-600 group-hover:border-emerald-300 transition-colors"
+      ? "bg-slate-900 border-slate-800/80 text-slate-300 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-colors"
+      : "bg-slate-50 border-slate-200 text-slate-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors"
   }`;
 
   const copyBtnCls = `flex-1 py-2.5 px-4 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 border cursor-pointer ${
