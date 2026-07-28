@@ -1,4 +1,4 @@
-import { Briefcase } from "lucide-react";
+import { Briefcase, ArrowRight } from "lucide-react";
 import { uiTranslations } from "../../constants/translations";
 import { experiences } from "../../data";
 import type { Language } from "../../types";
@@ -105,13 +105,12 @@ export function Experience({ lang, isDark }: ExperienceProps) {
                           isDark ? "text-slate-300" : "text-slate-700"
                         }`}
                       >
-                        <span
-                          className={`font-mono text-[11px] mt-1 ${
-                            isDark ? "text-blue-400" : "text-blue-600 font-semibold"
+                        <ArrowRight
+                          className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${
+                            isDark ? "text-blue-400" : "text-blue-600"
                           }`}
-                        >
-                          ➔
-                        </span>
+                          aria-hidden="true"
+                        />
                         <span className="leading-relaxed">{highlight}</span>
                       </li>
                     ))}

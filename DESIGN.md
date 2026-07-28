@@ -43,7 +43,7 @@ Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el ic
 
 ### Colores de marca
 
-[`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además `text` y `dotBg`, elegidos a mano.
+[`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además su `text` y su `icon`.
 
 Esta lista es la fuente única de color de marca: la consumen tanto la marquesina de Skills como los chips de Projects. **Añadir una tecnología aquí la hace aparecer en ambas**, así que es también una declaración de competencias, no solo un color.
 
@@ -199,5 +199,7 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 ## Deuda conocida
 
-- Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 —también en su versión variable—, así que el navegador sintetiza esa diferencia. Eliminarla exigiría bajar las píldoras a `font-extrabold`.
-- Los caracteres `➔` y `✖` quedan fuera del subconjunto latino, así que se renderizan con una fuente del sistema. Ya ocurría con Google Fonts; sustituirlos por iconos de Lucide lo resolvería.
+Ninguna pendiente. Las entradas anteriores —grises sin token, fuentes en CDN, ausencia de foco de teclado, contraste de los badges, pesos sintetizados y caracteres fuera del subconjunto latino— están todas cerradas.
+
+Al añadir deuda aquí, anota el dato que la hace verificable (el contraste medido, el peso que falta), no solo la descripción: así se comprueba si sigue viva sin volver a investigarla.
+

@@ -3,8 +3,8 @@
 @theme {
   /* @fontsource-variable ships these under a "Variable" family name; the plain
      names stay as a fallback for locally installed copies. Inter covers
-     100–900, JetBrains Mono only 100–800 — the tech pills ask for 900
-     (font-black), so that one weight is still synthesised from 800. */
+     100–900, JetBrains Mono only 100–800, so nothing may ask the mono face for
+     900: use font-extrabold, never font-black, on font-mono text. */
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
