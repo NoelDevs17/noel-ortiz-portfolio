@@ -126,13 +126,24 @@ className={`... ${isDark ? "bg-slate-900/40 border-slate-800" : "bg-white border
 
 Es verboso, pero explícito: ambos temas se leen juntos en el mismo punto del código. **Si añades un componente, sigue este patrón** en lugar de introducir un segundo mecanismo.
 
-Detalles del comportamiento actual, en [`useTheme.ts`](src/hooks/useTheme.ts) y [`useLanguage.ts`](src/hooks/useLanguage.ts):
+### Arranque y persistencia
 
-- Arranca en **oscuro**; el idioma arranca en **español**.
-- No se lee `prefers-color-scheme`.
-- Ninguna de las dos preferencias persiste entre recargas.
+El fondo de página se decide **antes de que cargue el bundle**, en un script en línea dentro de `index.html`. Sin él la página queda blanca hasta que React monta, lo que produce un destello en tema oscuro.
 
-Son limitaciones conocidas, no descuidos del sistema visual: añadir `localStorage` y detección de preferencia del sistema es la mejora natural.
+Orden de precedencia, idéntico en el script y en [`useTheme.ts`](src/hooks/useTheme.ts):
+
+1. La elección guardada en `localStorage` (`theme`).
+2. `prefers-color-scheme` — **oscuro salvo que el sistema pida claro explícitamente**, para conservar la identidad oscura del sitio cuando no hay preferencia.
+3. El parámetro `initial` del hook, solo si `matchMedia` no existe.
+
+[`useLanguage.ts`](src/hooks/useLanguage.ts) sigue el mismo patrón con la clave `lang`, cayendo en `navigator.language`: inglés si el navegador lo es, español en cualquier otro caso. No necesita script de arranque porque el idioma no afecta al color del primer pintado.
+
+**Esa lógica está duplicada a propósito** entre el script y el hook: el script corre antes de que exista el módulo. Si cambias la clave de almacenamiento, la regla de precedencia o los dos colores de fondo, cámbialos en ambos sitios — hay un comentario en cada uno apuntando al otro.
+
+Dos detalles que conviene no romper:
+
+- **El `try` envuelve solo la lectura de `localStorage`**, nunca el pintado. En modo privado el almacenamiento lanza excepción; si el `catch` se tragara también el `matchMedia` y el pintado, el destello volvería.
+- El hook **reescribe el fondo de `<html>` en cada cambio de tema**, no solo al arrancar, para que el área de *overscroll*, la barra de desplazamiento y los controles nativos no se queden con el color que pintó el script.
 
 ## Movimiento
 
@@ -177,4 +188,3 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 - Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 —también en su versión variable—, así que el navegador sintetiza esa diferencia. Eliminarla exigiría bajar las píldoras a `font-extrabold`.
 - Los caracteres `➔` y `✖` quedan fuera del subconjunto latino, así que se renderizan con una fuente del sistema. Ya ocurría con Google Fonts; sustituirlos por iconos de Lucide lo resolvería.
-- El tema y el idioma no persisten entre recargas ni leen `prefers-color-scheme`.

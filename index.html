@@ -26,6 +26,30 @@
 
     <!-- Canonical -->
     <link rel="canonical" href="https://noel-ortiz.dev" />
+
+    <!--
+      Paints the page background before the bundle loads. Without this the
+      document stays white until React mounts, which flashes on a dark theme.
+      Mirrors readTheme() in src/hooks/useTheme.ts — if the storage key, the
+      fallback rule or these two colours change, change them there too.
+    -->
+    <script>
+      (function () {
+        var stored = null;
+        // Only the read is guarded: private mode makes localStorage throw, and
+        // painting must still happen in that case or the flash comes back.
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
+        var dark =
+          stored === "dark" || stored === "light"
+            ? stored === "dark"
+            : !window.matchMedia("(prefers-color-scheme: light)").matches;
+        var root = document.documentElement;
+        root.style.backgroundColor = dark ? "#020617" : "#f8fafc";
+        root.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
