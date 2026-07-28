@@ -3,6 +3,7 @@ export const uiTranslations = {
     nav: {
       about: "About",
       experience: "Experience",
+      projects: "Projects",
       skills: "Skills",
       education: "Education & Certs",
       contact: "Contact",
@@ -53,6 +54,14 @@ export const uiTranslations = {
       present: "Present",
       referencesOnRequest: "References available upon request.",
     },
+    projects: {
+      title: "Selected Projects",
+      subtitle: "Personal work and side builds",
+      inProduction: "In production",
+      inDevelopment: "In development",
+      viewRepo: "Code",
+      viewDemo: "Live",
+    },
     skills: {
       title: "Technical Stack",
       subtitle: "Filter or search technologies in real-time",
@@ -83,6 +92,7 @@ export const uiTranslations = {
       summary: "Professional Summary",
       stack: "Technical Stack",
       workExperience: "Work Experience",
+      projects: "Projects",
       education: "Education",
       languages: "Languages",
     },
@@ -95,6 +105,7 @@ export const uiTranslations = {
     nav: {
       about: "Sobre mí",
       experience: "Experiencia",
+      projects: "Proyectos",
       skills: "Habilidades",
       education: "Estudios y Certificaciones",
       contact: "Contacto",
@@ -145,6 +156,14 @@ export const uiTranslations = {
       present: "Presente",
       referencesOnRequest: "Referencias disponibles a solicitud.",
     },
+    projects: {
+      title: "Proyectos Destacados",
+      subtitle: "Trabajo personal y proyectos propios",
+      inProduction: "En producción",
+      inDevelopment: "En desarrollo",
+      viewRepo: "Código",
+      viewDemo: "Ver online",
+    },
     skills: {
       title: "Stack Tecnológico",
       subtitle: "Filtra o busca tecnologías en tiempo real",
@@ -175,6 +194,7 @@ export const uiTranslations = {
       summary: "Perfil Profesional",
       stack: "Stack Tecnológico",
       workExperience: "Experiencia Laboral",
+      projects: "Proyectos",
       education: "Formación Académica",
       languages: "Idiomas",
     },

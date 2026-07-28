@@ -46,7 +46,7 @@ export function Skills({ lang, isDark }: SkillsProps) {
           >
             <Code2 className="w-4 h-4 animate-pulse" />
             <span className="font-mono text-xs uppercase tracking-widest">
-              03. {t.nav.skills}
+              04. {t.nav.skills}
             </span>
           </div>
           <h2

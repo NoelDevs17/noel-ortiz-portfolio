@@ -24,6 +24,7 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
   const navItems: Array<{ id: string; label: string }> = [
     { id: "about", label: t.nav.about },
     { id: "experience", label: t.nav.experience },
+    { id: "projects", label: t.nav.projects },
     { id: "skills", label: t.nav.skills },
     { id: "education", label: t.nav.education },
     { id: "contact", label: t.nav.contact },

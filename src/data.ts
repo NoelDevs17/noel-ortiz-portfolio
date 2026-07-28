@@ -2,12 +2,13 @@ import type {
   PersonalInfo,
   SkillGroup,
   Experience,
+  Project,
   Education,
   Certification,
   LanguageProficiency,
 } from "./types";
 
-export type { PersonalInfo, SkillGroup, Experience, Education, Certification, LanguageProficiency };
+export type { PersonalInfo, SkillGroup, Experience, Project, Education, Certification, LanguageProficiency };
 
 export const personalInfo: PersonalInfo = {
   name: "Noel Ortiz",
@@ -130,6 +131,19 @@ export const experiences: Experience[] = [
         "Garantizar la alta disponibilidad y correcto funcionamiento de los sistemas bancarios distribuidos.",
       ],
     },
+  },
+];
+
+export const projects: Project[] = [
+  {
+    name: "Ponte Pa' Lo Tuyo",
+    description: {
+      en: "Web app that turns class notes into AI-generated multiple-choice quizzes. .NET 8 backend built on Clean Architecture, React front end, and sign-in by email or Google.",
+      es: "Aplicación web que convierte apuntes de clase en cuestionarios de opción múltiple generados con IA. Backend en .NET 8 con Clean Architecture, frontend en React y autenticación con correo o Google.",
+    },
+    technologies: [".NET Core", "React", "TypeScript", "PostgreSQL", "TailwindCSS"],
+    status: "production",
+    // Sin periodo ni enlaces: añádelos aquí cuando haya repo o demo pública.
   },
 ];
 

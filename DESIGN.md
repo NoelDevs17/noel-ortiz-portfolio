@@ -43,7 +43,9 @@ Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el ic
 
 ### Colores de marca
 
-[`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además `text` y `dotBg` para garantizar contraste sobre su propio fondo.
+[`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además `text` y `dotBg`, elegidos a mano.
+
+Esta lista es la fuente única de color de marca: la consumen tanto la marquesina de Skills como los chips de Projects. **Añadir una tecnología aquí la hace aparecer en ambas**, así que es también una declaración de competencias, no solo un color.
 
 ### Superficies oscuras
 
@@ -94,9 +96,11 @@ Las etiquetas en mayúsculas llevan siempre `tracking-wider` o `tracking-widest`
 ## Layout
 
 **Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6`, aplicado **sobre el propio `<section>`** —no sobre un `div` interno— para que el borde inferior y el contenido compartan ancho. El Header y el Footer repiten el mismo contenedor.
-**Ritmo vertical:** `py-16 md:py-24` en las seis secciones, con `border-b` entre ellas. Contact no lo lleva por ser la última antes del pie.
+**Ritmo vertical:** `py-16 md:py-24` en las siete secciones, con `border-b` entre ellas. Contact no lo lleva por ser la última antes del pie.
 
-**Patrón de dos columnas** — la estructura dominante (About, Experience, Contact):
+**Numeración:** los eyebrows van de `01.` a `06.` (Hero no lleva número). Están escritos a mano en cada sección, así que **insertar una sección obliga a renumerar las siguientes** — y también a añadirla al `navItems` del Header y al `PrintOverlay`, que no heredan nada automáticamente.
+
+**Patrón de dos columnas** — la estructura dominante (About, Experience, Projects, Contact):
 
 ```
 grid grid-cols-1 lg:grid-cols-12 gap-12
@@ -188,3 +192,4 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 
 - Las píldoras de tecnología usan `font-black` (900), pero JetBrains Mono llega solo hasta 800 —también en su versión variable—, así que el navegador sintetiza esa diferencia. Eliminarla exigiría bajar las píldoras a `font-extrabold`.
 - Los caracteres `➔` y `✖` quedan fuera del subconjunto latino, así que se renderizan con una fuente del sistema. Ya ocurría con Google Fonts; sustituirlos por iconos de Lucide lo resolvería.
+- **10 de los 32 badges de tecnología no llegan al 4.5:1** de contraste texto/fondo: `TAILWIND CSS` (2.43:1), `CLEAN ARCHITECTURE` (2.54), `GITLAB` (2.86), `RABBITMQ` (2.94), `DOCKER` (3.15), `GIT` (3.56), `HTML5` (3.88), `C#` (4.08), `MICROSERVICES` (4.10) y `NESTJS` (4.30). El fondo es color de marca y no se toca, pero el `text` sí es decisión nuestra: pasar los más claros a `text-black` lo arregla sin alterar la identidad de cada tecnología.

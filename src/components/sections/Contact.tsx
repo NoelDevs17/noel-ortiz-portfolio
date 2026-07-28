@@ -36,7 +36,7 @@ export function Contact({
           >
             <Mail className="w-4 h-4" />
             <span className="font-mono text-xs uppercase tracking-wider">
-              05. {t.nav.contact}
+              06. {t.nav.contact}
             </span>
           </div>
           <h2

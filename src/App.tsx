@@ -4,6 +4,7 @@ import { Footer } from "./components/layout/Footer";
 import { Hero } from "./components/sections/Hero";
 import { About } from "./components/sections/About";
 import { Experience } from "./components/sections/Experience";
+import { Projects } from "./components/sections/Projects";
 import { Skills } from "./components/sections/Skills";
 import { Education } from "./components/sections/Education";
 import { Contact } from "./components/sections/Contact";
@@ -48,6 +49,7 @@ export default function App() {
         />
         <About lang={lang} isDark={isDark} />
         <Experience lang={lang} isDark={isDark} />
+        <Projects lang={lang} isDark={isDark} />
         <Skills lang={lang} isDark={isDark} />
         <Education lang={lang} isDark={isDark} />
         <Contact

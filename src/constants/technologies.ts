@@ -11,6 +11,7 @@ export const noelTechnologies: TechBadge[] = [
 
   // Frameworks & Libraries
   { name: "ANGULAR", bg: "bg-[#dd0031]", text: "text-white", dotBg: "bg-yellow-300 animate-pulse" },
+  { name: "REACT", bg: "bg-[#61dafb]", text: "text-black", dotBg: "bg-black" },
   { name: ".NET CORE", bg: "bg-[#512bd4]", text: "text-white", dotBg: "bg-white" },
   { name: "NESTJS", bg: "bg-[#ea2845]", text: "text-white", dotBg: "bg-white" },
   { name: "RXJS", bg: "bg-[#e10098]", text: "text-white", dotBg: "bg-pink-300" },
@@ -19,6 +20,7 @@ export const noelTechnologies: TechBadge[] = [
 
   // Databases & Backend Essentials
   { name: "SQL SERVER", bg: "bg-[#cc292b]", text: "text-white", dotBg: "bg-white" },
+  { name: "POSTGRESQL", bg: "bg-[#336791]", text: "text-white", dotBg: "bg-white" },
   { name: "ENTITY FRAMEWORK", bg: "bg-[#68217a]", text: "text-white", dotBg: "bg-purple-300" },
   { name: "LINQ", bg: "bg-[#007acc]", text: "text-white", dotBg: "bg-white" },
   { name: "REDIS", bg: "bg-[#dc382d]", text: "text-white", dotBg: "bg-white" },

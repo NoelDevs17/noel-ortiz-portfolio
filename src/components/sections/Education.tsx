@@ -29,7 +29,7 @@ export function Education({ lang, isDark }: EducationProps) {
           >
             <GraduationCap className="w-4 h-4" />
             <span className="font-mono text-xs uppercase tracking-wider">
-              04. {t.nav.education}
+              05. {t.nav.education}
             </span>
           </div>
           <h2

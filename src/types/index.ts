@@ -24,6 +24,23 @@ export interface Experience {
   highlights: Record<Language, string[]>;
 }
 
+/**
+ * `status` is a union rather than free text so it maps straight onto the colour
+ * rule: "production" renders emerald, "development" amber. See DESIGN.md.
+ * `technologies` should match names in constants/technologies.ts to pick up the
+ * official brand colour; anything unknown falls back to a neutral chip.
+ */
+export interface Project {
+  name: string;
+  description: Record<Language, string>;
+  technologies: string[];
+  /** Optional: personal projects often have no date worth showing. */
+  period?: string;
+  status: "production" | "development";
+  repoUrl?: string;
+  demoUrl?: string;
+}
+
 export interface Education {
   degree: Record<Language, string>;
   institution: string;

@@ -3,6 +3,7 @@ import {
   personalInfo,
   skillGroups,
   experiences,
+  projects,
   educations,
   languages,
 } from "../../data";
@@ -93,6 +94,33 @@ export function PrintOverlay({ lang }: PrintOverlayProps) {
           ))}
         </div>
       </div>
+
+      {/* Projects */}
+      {projects.length > 0 && (
+        <div className="mt-5 page-break-inside-avoid">
+          <h3 className="font-mono text-xs font-bold uppercase border-b border-slate-300 pb-1 text-slate-900">
+            {t.print.projects}
+          </h3>
+          <div className="space-y-2 mt-2">
+            {projects.map((project, idx) => (
+              <div key={idx} className="text-[10px]">
+                <div className="flex justify-between items-baseline">
+                  <strong className="text-slate-900 text-xs">{project.name}</strong>
+                  {project.period && (
+                    <span className="font-mono text-slate-600">{project.period}</span>
+                  )}
+                </div>
+                <p className="text-slate-700 mt-0.5">{project.description[lang]}</p>
+                {project.technologies.length > 0 && (
+                  <p className="text-slate-600 font-mono mt-0.5">
+                    {project.technologies.join(", ")}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Education & Languages */}
       <div className="mt-5 grid grid-cols-2 gap-6 page-break-inside-avoid">
