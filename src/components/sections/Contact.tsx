@@ -76,7 +76,7 @@ export function Contact({
               }}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+            <div className="relative z-10 max-w-md mx-auto">
               {/* Email card */}
               <ContactCard
                 isDark={isDark}
