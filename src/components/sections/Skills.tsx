@@ -3,7 +3,23 @@ import { Code2, Search, Layers } from "lucide-react";
 import { uiTranslations } from "../../constants/translations";
 import { noelTechnologies } from "../../constants/technologies";
 import { languages } from "../../data";
-import type { Language } from "../../types";
+import type { Language, TechBadge } from "../../types";
+
+/**
+ * One technology pill. The icon carries no colour of its own — it inherits the
+ * badge's `text` via currentColor, so contrast is handled in one place.
+ */
+function TechPill({ tech, className = "" }: { tech: TechBadge; className?: string }) {
+  const Icon = tech.icon;
+  return (
+    <div
+      className={`inline-flex items-center px-4 py-2 rounded-full font-mono text-xs font-black uppercase tracking-wider ${tech.bg} ${tech.text} ${className}`}
+    >
+      <Icon className="w-3 h-3 mr-2 shrink-0" />
+      <span>{tech.name}</span>
+    </div>
+  );
+}
 
 interface SkillsProps {
   lang: Language;
@@ -81,24 +97,12 @@ export function Skills({ lang, isDark }: SkillsProps) {
 
         <div className="flex w-max gap-3 animate-marquee whitespace-nowrap">
           {tripled.map((tech, idx) => (
-            <div
-              key={`m1-${idx}`}
-              className={`inline-flex items-center px-4 py-2 rounded-full font-mono text-xs font-black uppercase tracking-wider ${tech.bg} ${tech.text} shadow-xs`}
-            >
-              <span className={`w-2 h-2 rounded-full mr-2 ${tech.dotBg}`} />
-              {tech.name}
-            </div>
+            <TechPill key={`m1-${idx}`} tech={tech} className="shadow-xs" />
           ))}
         </div>
         <div className="flex w-max gap-3 animate-marquee-reverse whitespace-nowrap">
           {tripledReversed.map((tech, idx) => (
-            <div
-              key={`m2-${idx}`}
-              className={`inline-flex items-center px-4 py-2 rounded-full font-mono text-xs font-black uppercase tracking-wider ${tech.bg} ${tech.text} shadow-xs`}
-            >
-              <span className={`w-2 h-2 rounded-full mr-2 ${tech.dotBg}`} />
-              {tech.name}
-            </div>
+            <TechPill key={`m2-${idx}`} tech={tech} className="shadow-xs" />
           ))}
         </div>
       </div>
@@ -188,13 +192,11 @@ export function Skills({ lang, isDark }: SkillsProps) {
           {/* Tech pills grid */}
           <div className="relative z-10 flex flex-wrap gap-2.5 sm:gap-3 justify-center md:justify-start">
             {filteredTechs.map((tech, idx) => (
-              <div
+              <TechPill
                 key={idx}
-                className={`inline-flex items-center px-4 py-2 rounded-full font-mono text-xs font-black uppercase tracking-wider transition-all duration-300 transform hover:scale-[1.03] hover:shadow-sm ${tech.bg} ${tech.text}`}
-              >
-                <span className={`w-2 h-2 rounded-full mr-2 ${tech.dotBg}`} />
-                <span>{tech.name}</span>
-              </div>
+                tech={tech}
+                className="transition-all duration-300 transform hover:scale-[1.03] hover:shadow-sm"
+              />
             ))}
 
             {filteredTechs.length === 0 && (

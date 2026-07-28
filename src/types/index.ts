@@ -1,3 +1,5 @@
+import type { ComponentType } from "react";
+
 export type Language = "en" | "es";
 export type Theme = "light" | "dark";
 
@@ -60,7 +62,8 @@ export interface TechBadge {
   name: string;
   bg: string;
   text: string;
-  dotBg: string;
+  /** Renders in place of the old dot; inherits `text` through currentColor. */
+  icon: ComponentType<{ className?: string }>;
 }
 
 export interface LanguageProficiency {

@@ -47,7 +47,14 @@ Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el ic
 
 Esta lista es la fuente única de color de marca: la consumen tanto la marquesina de Skills como los chips de Projects. **Añadir una tecnología aquí la hace aparecer en ambas**, así que es también una declaración de competencias, no solo un color.
 
-**Al añadir un badge, elige el `text` midiendo, no a ojo.** El fondo es color de marca y no se toca, pero el texto es decisión nuestra y debe alcanzar 4.5:1 sobre ese fondo. La regla práctica: los fondos claros o saturados —cian, naranja, verde medio— piden `text-black`; los oscuros, `text-white`. El `dotBg` acompaña al texto. Los 32 badges actuales cumplen, con el mínimo en 4.51:1.
+**Al añadir un badge, elige el `text` midiendo, no a ojo.** El fondo es color de marca y no se toca, pero el texto es decisión nuestra y debe alcanzar 4.5:1 sobre ese fondo. La regla práctica: los fondos claros o saturados —cian, naranja, verde medio— piden `text-black`; los oscuros, `text-white`. Los 32 badges actuales cumplen, con el mínimo en 4.51:1.
+
+Cada entrada lleva además un `icon`, que sustituye al antiguo punto de color. Los logotipos de marca vienen de `react-icons/si` (Simple Icons); lo que no tiene logo cae en un icono de Lucide. **El icono no define color propio**: hereda el `text` del badge vía `currentColor`, de modo que el contraste se decide en un único sitio.
+
+Dos avisos al añadir iconos:
+
+- **Simple Icons no tiene marcas de Microsoft** (retiradas por política de marca registrada). SQL Server, Azure DevOps, Entity Framework y LINQ usan icono genérico, igual que gRPC, MassTransit y YARP.
+- **`SiSolid` existe, pero es SolidJS**, no los principios SOLID. Verifica que el logo corresponde a la tecnología antes de importarlo; el nombre coincidente no basta.
 
 ### Superficies oscuras
 

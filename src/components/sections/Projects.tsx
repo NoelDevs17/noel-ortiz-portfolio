@@ -1,6 +1,6 @@
 import { FolderGit2, Github, ExternalLink } from "lucide-react";
 import { uiTranslations } from "../../constants/translations";
-import { noelTechnologies } from "../../constants/technologies";
+import { noelTechnologies, genericTechIcon } from "../../constants/technologies";
 import { projects } from "../../data";
 import type { Language, Project } from "../../types";
 
@@ -172,25 +172,31 @@ function TechChip({ name, isDark }: { name: string; isDark: boolean }) {
     (tech) => normalise(tech.name) === normalise(name)
   );
 
+  // Unknown name: neutral chip with the generic icon, mirroring the colour
+  // fallback so an unlisted technology still reads as a chip and not as a gap.
   if (!badge) {
+    const Generic = genericTechIcon;
     return (
       <span
-        className={`px-2.5 py-1 rounded-lg font-mono text-[10px] uppercase tracking-wider border ${
+        className={`inline-flex items-center px-2.5 py-1 rounded-lg font-mono text-[10px] uppercase tracking-wider border ${
           isDark
             ? "bg-slate-800/40 border-slate-700/50 text-slate-300"
             : "bg-slate-100 border-slate-200 text-slate-600"
         }`}
       >
+        <Generic className="w-2.5 h-2.5 mr-1.5 shrink-0" />
         {name}
       </span>
     );
   }
 
+  const Icon = badge.icon;
+
   return (
     <span
       className={`inline-flex items-center px-2.5 py-1 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider ${badge.bg} ${badge.text}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${badge.dotBg}`} />
+      <Icon className="w-2.5 h-2.5 mr-1.5 shrink-0" />
       {badge.name}
     </span>
   );
