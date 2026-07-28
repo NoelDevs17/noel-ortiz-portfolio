@@ -17,6 +17,27 @@
   }
 }
 
+/* Keyboard focus indicator.
+   The theme lives in a React prop, not in a class on <html>, so this ring
+   cannot switch per theme. blue-500 is used because it is the only accent
+   that clears WCAG 2.1 SC 1.4.11 (3:1 non-text contrast) against both
+   grounds: 5.48:1 over slate-950 and 3.52:1 over slate-50. */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Tailwind's transition-all and transition-colors both list outline-color,
+   which fades the focus ring in from the element's own text colour instead of
+   showing it at full strength. Re-declared without it — the properties below
+   cover every transition this project actually animates. */
+.transition-all,
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color,
+    fill, stroke, box-shadow, opacity, transform, translate, scale, rotate,
+    filter, backdrop-filter;
+}
+
 /* Custom scrollbar styling for a cleaner look */
 ::-webkit-scrollbar {
   width: 6px;

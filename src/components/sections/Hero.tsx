@@ -213,19 +213,20 @@ interface ContactRowProps {
 
 function ContactRow({ icon, label, value, copied, onCopy, isDark, accentClass, hoverBorder }: ContactRowProps) {
   return (
-    <div
+    <button
+      type="button"
       onClick={onCopy}
-      className={`group flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
+      className={`group w-full text-left flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
         isDark
           ? `bg-slate-950/50 border-slate-800/50 ${hoverBorder} hover:bg-slate-900/50`
           : `bg-slate-50 border-slate-200 ${hoverBorder} hover:bg-slate-100/50 shadow-xs`
       }`}
     >
-      <div className="flex items-center space-x-3 overflow-hidden">
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${accentClass}`}>
+      <span className="flex items-center space-x-3 overflow-hidden">
+        <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${accentClass}`}>
           {icon}
-        </div>
-        <div className="overflow-hidden">
+        </span>
+        <span className="overflow-hidden">
           <span className="text-[9px] font-mono text-slate-500 block leading-none">{label}</span>
           <span
             className={`text-xs block truncate font-mono mt-0.5 ${
@@ -234,16 +235,16 @@ function ContactRow({ icon, label, value, copied, onCopy, isDark, accentClass, h
           >
             {value}
           </span>
-        </div>
-      </div>
-      <div className={`shrink-0 p-1 ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+        </span>
+      </span>
+      <span className={`shrink-0 p-1 ${isDark ? "text-slate-500" : "text-slate-400"}`}>
         {copied ? (
           <Check className="w-4 h-4 text-emerald-500 animate-bounce" />
         ) : (
           <Copy className="w-3.5 h-3.5" />
         )}
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 

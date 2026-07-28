@@ -170,8 +170,8 @@ export function Skills({ lang, isDark }: SkillsProps) {
                 placeholder={t.skills.searchPlaceholder}
                 className={`w-full pl-10 pr-10 py-2.5 text-xs rounded-full border font-mono transition-all placeholder:text-slate-500 ${
                   isDark
-                    ? "bg-slate-950/80 text-slate-200 border-slate-800/80 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
-                    : "bg-slate-50/60 text-slate-800 border-slate-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/30 shadow-xs"
+                    ? "bg-slate-950/80 text-slate-200 border-slate-800/80"
+                    : "bg-slate-50/60 text-slate-800 border-slate-200 shadow-xs"
                 }`}
               />
               {searchQuery && (

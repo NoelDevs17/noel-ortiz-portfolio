@@ -44,14 +44,15 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <div
-          className="flex items-center space-x-3 cursor-pointer"
+        <button
+          type="button"
+          className="flex items-center space-x-3 cursor-pointer text-left"
           onClick={() => handleNav("hero")}
         >
-          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-mono font-bold text-white shadow-xs">
+          <span className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-mono font-bold text-white shadow-xs">
             &lt;/&gt;
-          </div>
-          <div>
+          </span>
+          <span className="block">
             <span
               className={`font-mono text-[10px] tracking-wider uppercase block leading-none ${
                 isDark ? "text-slate-400" : "text-slate-500"
@@ -66,8 +67,8 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
             >
               NOEL_ORTIZ
             </span>
-          </div>
-        </div>
+          </span>
+        </button>
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center space-x-8">

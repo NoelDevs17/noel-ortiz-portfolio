@@ -142,6 +142,14 @@ Si añades una sección al sitio, decide explícitamente si entra en el CV: no s
 
 **Patrón de rejilla de fondo.** Dos degradados lineales de 1px a `currentColor`, con `backgroundSize` de 20px (Contact) o 24px (Skills), a opacidad 0.02–0.05. Va en un `div` absoluto con `pointer-events-none` y el contenido se eleva con `relative z-10`.
 
+**Foco de teclado.** Regla global en `index.css`: `outline: 2px solid #3b82f6` con `outline-offset: 2px`. Como el tema vive en una prop de React y no en una clase sobre `<html>`, el anillo no puede cambiar según el tema, así que se usa `blue-500` — el único acento que supera el 3:1 de contraste no textual (WCAG 2.1 SC 1.4.11) sobre **ambos** fondos: 5.48:1 sobre `slate-950` y 3.52:1 sobre `slate-50`. (`emerald-500`, el otro candidato, se queda en 2.48:1 sobre el fondo claro.)
+
+`transition-all` y `transition-colors` de Tailwind 4 incluyen `outline-color` en su lista de propiedades, lo que haría que el anillo se fundiera desde el color de texto del elemento en vez de aparecer a plena intensidad. Ambas utilidades se redeclaran en `index.css` sin esa propiedad. **Si añades una utilidad `transition-*` nueva, exclúyela también ahí.**
+
+Corolario: **todo elemento clicable debe ser un `<button>` o un `<a>`**, nunca un `div` con `onClick`. Un `div` no recibe foco, así que el anillo jamás aparecería sobre él y el teclado no podría activarlo.
+
+Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:outline-none` con anillos propios por componente, ni siquiera en campos de formulario.
+
 **Scrollbar.** Personalizado a 6px con pulgar `slate-400` translúcido, definido en `index.css`.
 
 **Iconos.** [Lucide](https://lucide.dev), a `w-3.5`, `w-4` o `w-5` según jerarquía. Nunca emoji como marcador de sección — chocaría con la estética de terminal.
@@ -152,4 +160,4 @@ Si añades una sección al sitio, decide explícitamente si entra en el CV: no s
 
 - Los cinco grises arbitrarios descritos arriba deberían consolidarse como tokens en `@theme`.
 - Las fuentes se cargan por `@import` desde el CDN de Google, lo que bloquea el render inicial y añade una dependencia externa; alojarlas localmente sería más rápido y robusto.
-- No hay estilos de `:focus-visible` definidos: la navegación por teclado depende del anillo por defecto del navegador, que en el tema oscuro apenas se percibe.
+- El tema y el idioma no persisten entre recargas ni leen `prefers-color-scheme`.
