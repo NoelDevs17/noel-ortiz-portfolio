@@ -262,8 +262,21 @@ para etiquetas, `font-light` en el párrafo de About.
   debajo de la barra fija. El mismo valor va como `offset={-100}` en
   `react-scroll`. **Si cambia uno, cambia el otro.**
 
-Las secciones alternan `primary-bg` y `secondary-bg` para marcar el ritmo — con
-dos excepciones que hoy rompen el patrón (ver deuda).
+### Alternancia de fondos
+
+Las secciones alternan `primary-bg` y `secondary-bg` para marcar el ritmo. La
+alternancia es **posicional, no fija**: si una sección deja de publicarse, todas
+las siguientes invierten su turno.
+
+Hoy solo Proyectos es condicional —se oculta mientras no haya proyectos
+reales—, así que Experiencia, Contacto y el pie reciben un prop `elevated`
+desde `App.tsx` en vez de llevar el fondo cableado.
+
+Al invertir una sección **hay que invertir también sus tarjetas**, o quedarían
+del mismo color que su fondo: es la regla de dependencia estructural aplicada.
+
+Si en el futuro se vuelven condicionales más secciones, conviene calcular la
+paridad una sola vez en `App.tsx` en lugar de seguir añadiendo props sueltos.
 
 ---
 

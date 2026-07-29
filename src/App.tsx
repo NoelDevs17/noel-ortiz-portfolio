@@ -1,5 +1,6 @@
 import { MotionConfig } from "framer-motion";
 import { LanguageProvider } from "./i18n/LanguageProvider";
+import { hasProjects } from "./data/portfolioData";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -30,11 +31,16 @@ function App() {
             <Hero />
             <About />
             <Skills />
-            <Projects />
-            <Experience />
-            <Contact />
+            {/*
+              La seccion de Proyectos solo existe cuando hay proyectos reales.
+              Al no publicarse, Experiencia ocupa su turno en la alternancia de
+              fondos y sube a la superficie elevada.
+            */}
+            {hasProjects && <Projects />}
+            <Experience elevated={!hasProjects} />
+            <Contact elevated={hasProjects} />
           </main>
-          <Footer />
+          <Footer elevated={!hasProjects} />
           <ScrollToTop />
         </div>
       </LanguageProvider>

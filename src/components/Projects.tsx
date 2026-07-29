@@ -1,5 +1,5 @@
 import SectionTitle from "./SectionTitle";
-import { projects } from "../data/portfolioData";
+import { visibleProjects } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -13,7 +13,7 @@ const Projects = () => {
         <SectionTitle>{t.projects.title}</SectionTitle>
 
         <div className="flex flex-col gap-24 mt-20">
-          {projects.map((project, index) => (
+          {visibleProjects.map((project, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}

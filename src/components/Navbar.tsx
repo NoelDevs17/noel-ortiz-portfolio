@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-scroll";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
-import { personalInfo } from "../data/portfolioData";
+import { hasProjects, personalInfo } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
 import { useTheme } from "../hooks/useTheme";
 import type { Language } from "../types";
@@ -97,7 +97,11 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const navLinks = navSections.map((id) => ({ to: id, name: t.nav[id] }));
+  // Sin proyectos publicados el enlace desaparece: llevaria a un ancla que no
+  // existe en el documento.
+  const navLinks = navSections
+    .filter((id) => id !== "projects" || hasProjects)
+    .map((id) => ({ to: id, name: t.nav[id] }));
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);

@@ -3,13 +3,28 @@ import { experience } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
 import { motion } from "framer-motion";
 
-const Experience = () => {
+interface ExperienceProps {
+  /**
+   * Sube la seccion a la superficie elevada.
+   *
+   * Las secciones alternan fondo para marcar el ritmo. Cuando Proyectos no se
+   * publica, Experiencia pasa a ocupar su turno en la alternancia y le toca el
+   * fondo contrario. Las tarjetas se invierten con ella: si compartieran color
+   * con su seccion desaparecerian, que es lo que prohibe la regla de
+   * dependencia estructural del DESIGN.md.
+   */
+  elevated?: boolean;
+}
+
+const Experience = ({ elevated = false }: ExperienceProps) => {
   const { t, pick } = useI18n();
+  const fondoSeccion = elevated ? "bg-secondary-bg" : "bg-primary-bg";
+  const fondoTarjeta = elevated ? "bg-primary-bg/80" : "bg-secondary-bg/80";
 
   return (
     <section
       id="experience"
-      className="py-24 bg-primary-bg relative overflow-hidden"
+      className={`py-24 ${fondoSeccion} relative overflow-hidden`}
     >
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-5 pointer-events-none">
@@ -51,7 +66,7 @@ const Experience = () => {
                 <div
                   className={`pl-12 md:pl-0 md:w-1/2 ${index % 2 === 0 ? "md:pr-12" : "md:pl-12"}`}
                 >
-                  <div className="bg-secondary-bg/80 backdrop-blur-md p-6 rounded-xl border border-hairline shadow-lg hover:border-accent/30 transition-colors group">
+                  <div className={`${fondoTarjeta} backdrop-blur-md p-6 rounded-xl border border-hairline shadow-lg hover:border-accent/30 transition-colors group`}>
                     <h3 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors">
                       {pick(exp.role)}
                     </h3>

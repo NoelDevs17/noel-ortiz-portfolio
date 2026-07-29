@@ -2,13 +2,18 @@ import { personalInfo } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
 import { motion } from "framer-motion";
 
-const Contact = () => {
+interface ContactProps {
+  /** Ver la nota sobre alternancia de fondos en Experience.tsx. */
+  elevated?: boolean;
+}
+
+const Contact = ({ elevated = true }: ContactProps) => {
   const { t } = useI18n();
 
   return (
     <section
       id="contact"
-      className="py-32 bg-secondary-bg flex items-center justify-center text-center relative overflow-hidden"
+      className={`py-32 ${elevated ? "bg-secondary-bg" : "bg-primary-bg"} flex items-center justify-center text-center relative overflow-hidden`}
     >
       {/* Glowing circle behind */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none"></div>

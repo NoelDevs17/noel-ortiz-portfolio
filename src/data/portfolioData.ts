@@ -249,27 +249,23 @@ export const languages: Localized<LanguageProficiency[]> = {
 };
 
 /**
- * PENDIENTE. Los proyectos se trabajan aparte, con sus capturas reales.
- * Hasta entonces queda una entrada de marcador para que la seccion no
- * desaparezca y el layout siga siendo verificable.
+ * Proyectos.
+ *
+ * Vacio a proposito: la seccion no se publica hasta que haya contenido real.
+ * En cuanto se anada aqui una entrada con titulo de verdad, la seccion y su
+ * enlace en la navegacion vuelven solos, sin tocar ningun componente.
  */
-export const projects: Project[] = [
-  {
-    title: "TODO: nombre del proyecto",
-    tech: ["TODO", "TODO"],
-    description: {
-      es: [
-        "TODO: primera linea de la descripcion del proyecto.",
-        "TODO: segunda linea, opcional.",
-      ],
-      en: [
-        "TODO: first line of the project description.",
-        "TODO: second line, optional.",
-      ],
-    },
-    duration: "TODO: periodo",
-    status: "production",
-    category: "producto",
-    image: null,
-  },
-];
+export const projects: Project[] = [];
+
+/** Un proyecto es un marcador mientras su titulo empiece por "TODO". */
+const esMarcador = (proyecto: Project) =>
+  proyecto.title.trim().toUpperCase().startsWith("TODO");
+
+/**
+ * Los unicos proyectos que llegan a pintarse. Filtrar aqui, y no en el
+ * componente, evita que un marcador olvidado se publique por descuido.
+ */
+export const visibleProjects = projects.filter((p) => !esMarcador(p));
+
+/** Gobierna si la seccion existe y si aparece su enlace en la navegacion. */
+export const hasProjects = visibleProjects.length > 0;
