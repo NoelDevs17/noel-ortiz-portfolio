@@ -1,20 +1,50 @@
+import {
+  SiTypescript,
+  SiSharp,
+  SiAngular,
+  SiReactivex,
+  SiHtml5,
+  SiBootstrap,
+  SiTailwindcss,
+  SiDotnet,
+  SiNestjs,
+  SiGit,
+  SiGithub,
+  SiGitlab,
+  SiJira,
+} from "react-icons/si";
+import { FaDatabase } from "react-icons/fa";
+import { TbBoxMultiple } from "react-icons/tb";
 import type {
-  PersonalInfo,
-  SkillGroup,
-  Experience,
-  Project,
-  Education,
   Certification,
+  EducationEntry,
+  ExperienceEntry,
   LanguageProficiency,
-} from "./types";
+  Localized,
+  PersonalInfo,
+  Project,
+  SkillGroup,
+} from "../types";
 
-export type { PersonalInfo, SkillGroup, Experience, Project, Education, Certification, LanguageProficiency };
+/**
+ * Contenido real, trasladado desde el portafolio anterior de Noel.
+ *
+ * Los iconos se guardan como referencia al componente (`SiAngular`), no como
+ * elemento ya construido, para que este archivo siga siendo TypeScript puro.
+ *
+ * Simple Icons no publica marcas de Microsoft, asi que SQL Server, Entity
+ * Framework, LINQ y Azure DevOps caen en iconos genericos. No es un descuido.
+ */
 
 export const personalInfo: PersonalInfo = {
   name: "Noel Ortiz",
   titles: {
     en: ["Full Stack Developer", "Tech Lead", "Angular & .NET Developer"],
-    es: ["Desarrollador Full Stack", "Líder Técnico", "Desarrollador Angular & .NET"],
+    es: [
+      "Desarrollador Full Stack",
+      "Líder Técnico",
+      "Desarrollador Angular & .NET",
+    ],
   },
   specialty: {
     en: "Specialist in Government and Banking Solutions",
@@ -22,8 +52,10 @@ export const personalInfo: PersonalInfo = {
   },
   email: "noelrum17@hotmail.com",
   location: "Santo Domingo, Dominican Republic",
-  github: "https://github.com/NoelDevs17",
   linkedin: "https://linkedin.com/in/noelortizsanchez",
+  github: "https://github.com/NoelDevs17",
+  // Archivo estatico en public/. Se mantiene a mano: ver DESIGN.md.
+  resumeLink: "/cv-noel-ortiz.pdf",
   summary: {
     en: [
       "Tech Leader with experience leading strategic projects in the government and banking sectors, specialized in designing scalable architectures and strengthening development teams through best practices and continuous improvement.",
@@ -38,36 +70,63 @@ export const personalInfo: PersonalInfo = {
       "Participo activamente en el análisis y levantamiento de requerimientos junto a partes interesadas del gobierno y la banca, traduciendo necesidades de negocio en soluciones técnicas robustas, manteniendo siempre un equilibrio entre rendimiento, simplicidad y escalabilidad.",
     ],
   },
+  shortBio: {
+    en: "Tech Lead and Full Stack Developer building scalable Angular and .NET systems for government and banking.",
+    es: "Líder Técnico y Desarrollador Full Stack que construye sistemas escalables en Angular y .NET para gobierno y banca.",
+  },
 };
 
 export const skillGroups: SkillGroup[] = [
   {
     category: { en: "Programming Languages", es: "Lenguajes de Programación" },
-    skills: ["TypeScript", "C#", "SQL"],
+    skills: [
+      { name: "TypeScript", icon: SiTypescript },
+      { name: "C#", icon: SiSharp },
+      { name: "SQL", icon: FaDatabase },
+    ],
   },
   {
     category: { en: "Frontend Technologies", es: "Tecnologías Frontend" },
-    skills: ["Angular", "RxJS", "HTML5", "Bootstrap", "TailwindCSS"],
+    skills: [
+      { name: "Angular", icon: SiAngular },
+      { name: "RxJS", icon: SiReactivex },
+      { name: "HTML5", icon: SiHtml5 },
+      { name: "Bootstrap", icon: SiBootstrap },
+      { name: "TailwindCSS", icon: SiTailwindcss },
+    ],
   },
   {
     category: { en: "Backend & Databases", es: "Backend y Bases de Datos" },
-    skills: [".NET Core", "NestJs", "Entity Framework", "SQL Server", "Linq"],
+    skills: [
+      { name: ".NET Core", icon: SiDotnet },
+      { name: "NestJs", icon: SiNestjs },
+      { name: "Entity Framework", icon: FaDatabase },
+      { name: "SQL Server", icon: FaDatabase },
+      { name: "Linq", icon: FaDatabase },
+    ],
   },
   {
     category: { en: "Tools & DevOps", es: "Herramientas y DevOps" },
-    skills: ["Azure DevOps", "Git", "GitHub", "GitLab", "Jira"],
+    skills: [
+      { name: "Azure DevOps", icon: TbBoxMultiple },
+      { name: "Git", icon: SiGit },
+      { name: "GitHub", icon: SiGithub },
+      { name: "GitLab", icon: SiGitlab },
+      { name: "Jira", icon: SiJira },
+    ],
   },
 ];
 
-export const experiences: Experience[] = [
+export const experience: ExperienceEntry[] = [
   {
     role: {
       en: "Full Stack Developer & Tech Lead",
       es: "Líder Técnico & Desarrollador Full Stack",
     },
-    company: "Ministry of Public Administration (MAP) / Ministerio de Administración Pública",
-    period: "03/2025 - Present",
-    highlights: {
+    organization:
+      "Ministry of Public Administration (MAP) / Ministerio de Administración Pública",
+    duration: "03/2025 - Present",
+    points: {
       en: [
         "Lead the development of a new system using modern technologies such as Angular and .NET in their latest versions.",
         "Implement and promote development best practices based on SOLID principles.",
@@ -93,10 +152,10 @@ export const experiences: Experience[] = [
       en: "Programmer Analyst",
       es: "Analista Programador",
     },
-    company:
+    organization:
       "Ministry of Economy, Planning and Development (MEPYD) / Ministerio de Economía, Planificación y Desarrollo",
-    period: "05/2022 - 02/2025",
-    highlights: {
+    duration: "05/2022 - 02/2025",
+    points: {
       en: [
         "Performed requirements gathering and analysis for major ministry software projects.",
         "Collaborated with cross-functional teams to define technical requirements aligned with institutional objectives.",
@@ -118,10 +177,10 @@ export const experiences: Experience[] = [
       en: "Systems Analyst",
       es: "Analista de Sistemas",
     },
-    company:
+    organization:
       "Reserve Bank of the Dominican Republic (BanReservas) / Banco de Reservas",
-    period: "12/2021 - 04/2022",
-    highlights: {
+    duration: "12/2021 - 04/2022",
+    points: {
       en: [
         "Investigated and resolved technical issues and maintained applications oriented towards distributed environments for ATM administration systems.",
         "Managed programs and troubleshooting protocols to ensure high availability of distributed banking services.",
@@ -134,24 +193,11 @@ export const experiences: Experience[] = [
   },
 ];
 
-export const projects: Project[] = [
-  {
-    name: "Ponte Pa' Lo Tuyo",
-    description: {
-      en: "Web app that turns class notes into AI-generated multiple-choice quizzes. .NET 8 backend built on Clean Architecture, React front end, and sign-in by email or Google.",
-      es: "Aplicación web que convierte apuntes de clase en cuestionarios de opción múltiple generados con IA. Backend en .NET 8 con Clean Architecture, frontend en React y autenticación con correo o Google.",
-    },
-    technologies: [".NET Core", "React", "TypeScript", "PostgreSQL", "TailwindCSS"],
-    status: "production",
-    // Sin periodo ni enlaces: añádelos aquí cuando haya repo o demo pública.
-  },
-];
-
-export const educations: Education[] = [
+export const education: EducationEntry[] = [
   {
     degree: { en: "Software Engineering", es: "Ingeniería de Software" },
     institution: "University of the Caribbean (UNICARIBE)",
-    period: "03/2025 - Present",
+    duration: "03/2025 - Present",
     status: { en: "In Progress", es: "En Curso" },
   },
   {
@@ -160,7 +206,7 @@ export const educations: Education[] = [
       es: "Tecnólogo en Desarrollo de Software",
     },
     institution: "Technological Institute of the Americas (ITLA)",
-    period: "01/2018 - 08/2022",
+    duration: "01/2018 - 08/2022",
     status: { en: "Completed", es: "Completado" },
   },
 ];
@@ -170,28 +216,28 @@ export const certifications: Certification[] = [
     title:
       "Develop Microservices on .NET 8 using ASP.NET Web API, Docker, RabbitMQ, MassTransit, gRPC, Yarp Gateway, Redis, SqlServer",
     institution: "ITLA",
-    period: "07/2025 - Present",
+    duration: "07/2025 - Present",
     status: { en: "In Progress", es: "En Curso" },
   },
-  { title: "DIPLOMA IN SQL SERVER PROGRAMMING", period: "07/2024 - 09/2024" },
-  { title: "C#.Net Intermediate", period: "04/2024 - 09/2024" },
-  { title: "Introduction to Entity Framework Core 6", period: "04/2023 - 07/2023" },
-  { title: "JavaScript Array Manipulation Course", period: "08/2023" },
-  { title: "REST API Consumption with Angular Course", period: "03/2023" },
-  { title: "Angular: Components and Services Course", period: "02/2023" },
-  { title: "Angular Basics Course", period: "01/2023" },
+  { title: "DIPLOMA IN SQL SERVER PROGRAMMING", duration: "07/2024 - 09/2024" },
+  { title: "C#.Net Intermediate", duration: "04/2024 - 09/2024" },
+  { title: "Introduction to Entity Framework Core 6", duration: "04/2023 - 07/2023" },
+  { title: "JavaScript Array Manipulation Course", duration: "08/2023" },
+  { title: "REST API Consumption with Angular Course", duration: "03/2023" },
+  { title: "Angular: Components and Services Course", duration: "02/2023" },
+  { title: "Angular Basics Course", duration: "01/2023" },
   {
     title: "JavaScript Full-Course From Beginner to Professional",
-    period: "12/2021 - 04/2022",
+    duration: "12/2021 - 04/2022",
   },
   {
     title: "Git, GitHub and GitLab: Use of Code Repositories",
-    period: "12/2021 - 04/2022",
+    duration: "12/2021 - 04/2022",
   },
-  { title: "SQL Fundamentals Course", period: "02/2019 - 03/2019" },
+  { title: "SQL Fundamentals Course", duration: "02/2019 - 03/2019" },
 ];
 
-export const languages: Record<"en" | "es", LanguageProficiency[]> = {
+export const languages: Localized<LanguageProficiency[]> = {
   en: [
     { name: "Spanish", level: "Native or Bilingual Proficiency" },
     { name: "English", level: "Professional Working Proficiency" },
@@ -201,3 +247,29 @@ export const languages: Record<"en" | "es", LanguageProficiency[]> = {
     { name: "Inglés", level: "Competencia profesional completa" },
   ],
 };
+
+/**
+ * PENDIENTE. Los proyectos se trabajan aparte, con sus capturas reales.
+ * Hasta entonces queda una entrada de marcador para que la seccion no
+ * desaparezca y el layout siga siendo verificable.
+ */
+export const projects: Project[] = [
+  {
+    title: "TODO: nombre del proyecto",
+    tech: ["TODO", "TODO"],
+    description: {
+      es: [
+        "TODO: primera linea de la descripcion del proyecto.",
+        "TODO: segunda linea, opcional.",
+      ],
+      en: [
+        "TODO: first line of the project description.",
+        "TODO: second line, optional.",
+      ],
+    },
+    duration: "TODO: periodo",
+    status: "production",
+    category: "producto",
+    image: null,
+  },
+];

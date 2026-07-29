@@ -4,40 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
-    <title>Noel Ortiz | Full Stack Developer & Tech Lead</title>
-    <meta name="description" content="Portfolio profesional de Noel Ortiz — Tech Lead y Desarrollador Full Stack especializado en Angular, .NET y arquitecturas escalables para sectores gubernamentales y bancarios." />
-    <meta name="keywords" content="Noel Ortiz, Full Stack Developer, Tech Lead, Angular, .NET Core, Clean Architecture, SOLID, Dominican Republic" />
+    <!-- SEO principal -->
+    <title>Noel Ortiz | Tech Lead y Full Stack Developer</title>
+    <meta
+      name="description"
+      content="Tech Lead y Desarrollador Full Stack en República Dominicana. Diseño arquitecturas limpias y escalables con Angular y .NET para el sector gobierno y banca."
+    />
+    <meta
+      name="keywords"
+      content="Noel Ortiz, Tech Lead, Full Stack Developer, Angular, .NET, .NET Core, Clean Architecture, SOLID, desarrollo de software, sector gobierno, sector banca, República Dominicana"
+    />
     <meta name="author" content="Noel Ortiz" />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Noel Ortiz | Full Stack Developer & Tech Lead" />
-    <meta property="og:description" content="Tech Lead especializado en Angular, .NET y arquitecturas limpias para sectores gubernamentales y bancarios." />
-    <meta property="og:locale" content="es_DO" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Noel Ortiz | Full Stack Developer & Tech Lead" />
-    <meta name="twitter:description" content="Tech Lead especializado en Angular, .NET y arquitecturas limpias." />
-
-    <!-- Theme color for mobile browsers -->
-    <meta name="theme-color" content="#020617" />
-
-    <!-- Canonical -->
-    <link rel="canonical" href="https://noel-ortiz.dev" />
+    <link rel="canonical" href="https://noel.aleftavsoft.com/" />
 
     <!--
-      Paints the page background before the bundle loads. Without this the
-      document stays white until React mounts, which flashes on a dark theme.
-      Mirrors readTheme() in src/hooks/useTheme.ts — if the storage key, the
-      fallback rule or these two colours change, change them there too.
+      Color de la barra del navegador en movil. Arranca en la base oscura; el
+      hook useTheme reescribe este mismo meta al cambiar de tema.
+    -->
+    <meta name="theme-color" content="#0b0c0d" />
+
+    <!--
+      Pinta el fondo antes de que cargue el bundle. Sin esto el documento se
+      queda blanco hasta que React monta, lo que produce un fogonazo al entrar
+      en tema oscuro.
+
+      Replica readTheme() de src/hooks/useTheme.ts: si cambian la clave de
+      almacenamiento, la regla de respaldo o estos dos colores, hay que
+      cambiarlos alli tambien.
     -->
     <script>
       (function () {
         var stored = null;
-        // Only the read is guarded: private mode makes localStorage throw, and
-        // painting must still happen in that case or the flash comes back.
+        // Solo la lectura va protegida: en modo privado localStorage lanza, y
+        // el pintado tiene que ocurrir igual o vuelve el parpadeo.
         try {
           stored = localStorage.getItem("theme");
         } catch (e) {}
@@ -46,10 +45,56 @@
             ? stored === "dark"
             : !window.matchMedia("(prefers-color-scheme: light)").matches;
         var root = document.documentElement;
-        root.style.backgroundColor = dark ? "#020617" : "#f8fafc";
+        if (!dark) root.classList.add("light");
+        root.style.backgroundColor = dark ? "#0b0c0d" : "#f2f0e9";
         root.style.colorScheme = dark ? "dark" : "light";
       })();
     </script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Noel Ortiz" />
+    <meta property="og:url" content="https://noel.aleftavsoft.com/" />
+    <meta property="og:title" content="Noel Ortiz | Tech Lead y Full Stack Developer" />
+    <meta
+      property="og:description"
+      content="Tech Lead y Desarrollador Full Stack en República Dominicana. Diseño arquitecturas limpias y escalables con Angular y .NET para el sector gobierno y banca."
+    />
+    <!-- URL absoluta: las redes no resuelven rutas relativas -->
+    <meta property="og:image" content="https://noel.aleftavsoft.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Noel Ortiz, Tech Lead y Full Stack Developer. Angular, .NET y arquitecturas limpias."
+    />
+    <meta property="og:locale" content="es_DO" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Noel Ortiz | Tech Lead y Full Stack Developer" />
+    <meta
+      name="twitter:description"
+      content="Tech Lead y Desarrollador Full Stack en República Dominicana. Angular, .NET y arquitecturas limpias para gobierno y banca."
+    />
+    <meta name="twitter:image" content="https://noel.aleftavsoft.com/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Noel Ortiz, Tech Lead y Full Stack Developer. Angular, .NET y arquitecturas limpias."
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!--
+      Sin <link> a Google Fonts: la tipografia se sirve desde este mismo
+      dominio via @fontsource, importada en src/main.tsx.
+    -->
   </head>
   <body>
     <div id="root"></div>

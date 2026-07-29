@@ -1,28 +1,35 @@
-import { useEffect, useState } from "react";
-import type { Theme } from "../types";
+import { useCallback, useEffect, useState } from "react";
+
+export type Theme = "dark" | "light";
 
 const STORAGE_KEY = "theme";
 
-/** Page background per theme. Must match the boot script in index.html. */
+/**
+ * Color de fondo por tema. Tiene que coincidir con el script de arranque del
+ * index.html, que pinta antes de que exista este modulo.
+ */
 const PAGE_BG: Record<Theme, string> = {
-  dark: "#020617", // slate-950
-  light: "#f8fafc", // slate-50
+  dark: "#0b0c0d",
+  light: "#f2f0e9",
 };
 
 /**
- * Resolves the theme exactly like the boot script in index.html: a stored
- * choice wins, otherwise dark unless the OS explicitly asks for light. The
- * logic is duplicated on purpose — that script runs before this module exists,
- * so keep the two in sync.
+ * Resuelve el tema igual que el script de arranque: una eleccion guardada
+ * manda, y si no la hay se usa oscuro salvo que el sistema pida claro
+ * explicitamente.
+ *
+ * La logica esta duplicada a proposito: aquel script corre antes de que este
+ * modulo exista, y sin el la pagina se pintaria blanca hasta que React monta.
+ * Si cambia una, cambia la otra.
  */
-function readTheme(fallback: Theme): Theme {
+function readTheme(fallback: Theme = "dark"): Theme {
   let stored: string | null = null;
-  // Only the read is guarded: private mode makes localStorage throw, and the
-  // OS preference should still decide in that case.
+  // Solo la lectura va protegida: en modo privado localStorage puede lanzar, y
+  // el pintado tiene que ocurrir igual o vuelve el parpadeo.
   try {
     stored = localStorage.getItem(STORAGE_KEY);
   } catch {
-    // Storage unavailable; fall through to the media query.
+    // Almacenamiento no disponible; decide la preferencia del sistema.
   }
   if (stored === "dark" || stored === "light") return stored;
   return typeof window.matchMedia === "function"
@@ -32,23 +39,35 @@ function readTheme(fallback: Theme): Theme {
     : fallback;
 }
 
-export function useTheme(initial: Theme = "dark") {
-  const [theme, setTheme] = useState<Theme>(() => readTheme(initial));
+export function useTheme() {
+  const [theme, setTheme] = useState<Theme>(() => readTheme());
   const isDark = theme === "dark";
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
-      // Storage can be unavailable; the theme still applies for this session.
+      // El almacenamiento puede fallar; el tema sigue valiendo esta sesion.
     }
-    // Keep <html> in step with the app so overscroll areas, form controls and
-    // scrollbars match instead of keeping the colour the boot script painted.
-    document.documentElement.style.backgroundColor = PAGE_BG[theme];
-    document.documentElement.style.colorScheme = theme;
+
+    const root = document.documentElement;
+    // La clase es lo que conmuta las variables CSS de index.css.
+    root.classList.toggle("light", theme === "light");
+    // Mantiene <html> en sintonia con la app, para que la zona de rebote del
+    // scroll y los controles nativos no se queden del color anterior.
+    root.style.backgroundColor = PAGE_BG[theme];
+    root.style.colorScheme = theme;
+
+    // La barra del navegador en movil tambien debe seguir al tema.
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", PAGE_BG[theme]);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
+  const toggleTheme = useCallback(
+    () => setTheme((actual) => (actual === "dark" ? "light" : "dark")),
+    [],
+  );
 
   return { theme, isDark, toggleTheme };
 }

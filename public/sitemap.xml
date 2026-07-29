@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    Una sola URL: el sitio es de pagina unica y las secciones son anclas,
+    que no se indexan por separado. Si algun dia hay rutas reales, se anaden
+    aqui.
+  -->
+  <url>
+    <loc>https://noel.aleftavsoft.com/</loc>
+    <lastmod>2026-07-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
