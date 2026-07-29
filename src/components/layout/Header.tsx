@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { FileDown, Sun, Moon, Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { useState, type ReactNode } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { FileDown, Menu, Moon, Sun, X } from "lucide-react";
 import { uiTranslations } from "../../constants/translations";
 import { scrollToSection } from "../../utils/scroll";
 import type { Language } from "../../types";
@@ -12,16 +12,17 @@ interface HeaderProps {
   toggleTheme: () => void;
 }
 
-export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
+export function Header({
+  lang,
+  setLang,
+  isDark,
+  toggleTheme,
+}: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   const t = uiTranslations[lang];
 
-  const handleNav = (id: string) => {
-    setMobileMenuOpen(false);
-    scrollToSection(id);
-  };
-
-  const navItems: Array<{ id: string; label: string }> = [
+  const navItems = [
     { id: "about", label: t.nav.about },
     { id: "experience", label: t.nav.experience },
     { id: "projects", label: t.nav.projects },
@@ -30,157 +31,134 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
     { id: "contact", label: t.nav.contact },
   ];
 
-  const navBtnCls = `text-xs font-mono uppercase tracking-wider transition-colors ${
-    isDark ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
-  }`;
+  const handleNav = (id: string) => {
+    setMobileMenuOpen(false);
+    scrollToSection(id);
+  };
+
+  const surface = isDark
+    ? "border-slate-800/70 bg-slate-950/88 text-slate-100"
+    : "border-slate-200/80 bg-slate-50/90 text-slate-900";
 
   return (
     <header
       id="main-nav-bar"
-      className={`sticky top-0 z-50 backdrop-blur-md border-b print:hidden transition-all ${
-        isDark
-          ? "bg-slate-950/85 border-slate-900"
-          : "bg-white/85 border-slate-200 shadow-xs"
-      }`}
+      className={`sticky top-0 z-50 border-b backdrop-blur-xl print:hidden ${surface}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <button
           type="button"
-          className="flex items-center space-x-3 cursor-pointer text-left"
           onClick={() => handleNav("hero")}
+          className="group flex items-center gap-3 text-left active:scale-[0.98]"
+          aria-label="Noel Ortiz"
         >
-          <span className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-mono font-bold text-white shadow-xs">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-blue-600 font-mono text-sm font-extrabold text-white transition-transform duration-300 group-hover:-rotate-3">
             &lt;/&gt;
           </span>
-          <span className="block">
-            <span
-              className={`font-mono text-[10px] tracking-wider uppercase block leading-none ${
-                isDark ? "text-slate-400" : "text-slate-500"
-              }`}
-            >
-              CV PORTFOLIO
-            </span>
-            <span
-              className={`font-mono text-sm font-semibold block mt-0.5 ${
-                isDark ? "text-blue-400" : "text-blue-600"
-              }`}
-            >
-              NOEL_ORTIZ
-            </span>
+          <span className="font-mono text-sm font-semibold tracking-[-0.02em]">
+            NOEL_ORTIZ
           </span>
         </button>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary">
           {navItems.map(({ id, label }) => (
-            <button key={id} onClick={() => handleNav(id)} className={navBtnCls}>
+            <button
+              key={id}
+              type="button"
+              onClick={() => handleNav(id)}
+              className={`whitespace-nowrap font-mono text-[11px] transition-colors ${
+                isDark
+                  ? "text-slate-400 hover:text-white"
+                  : "text-slate-600 hover:text-slate-950"
+              }`}
+            >
               {label}
             </button>
           ))}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center space-x-4">
-          <button
+        <div className="hidden items-center gap-2 xl:flex">
+          <IconButton
             onClick={toggleTheme}
-            className={`p-2 rounded-lg border transition-all ${
-              isDark
-                ? "bg-slate-900 border-slate-800 text-yellow-400 hover:text-yellow-300"
-                : "bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-900 shadow-xs"
-            }`}
-            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            isDark={isDark}
           >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </IconButton>
           <button
+            type="button"
             onClick={() => window.print()}
-            className={`flex items-center space-x-2 text-xs font-mono px-3 py-1.5 rounded-lg border transition-all ${
+            className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 font-mono text-[11px] font-semibold transition-all active:scale-[0.98] ${
               isDark
-                ? "border-slate-800 bg-slate-900/60 text-slate-300 hover:text-blue-400 hover:border-blue-500/40"
-                : "border-slate-200 bg-white text-slate-700 hover:text-blue-600 hover:border-blue-500/40 shadow-xs"
+                ? "border-slate-800 bg-slate-900/70 text-slate-200 hover:border-blue-500/50 hover:text-white"
+                : "border-slate-200 bg-white text-slate-700 hover:border-blue-500/40 hover:text-slate-950"
             }`}
           >
-            <FileDown className="w-3.5 h-3.5" />
-            <span>{t.printResume}</span>
+            <FileDown className="h-3.5 w-3.5" />
+            <span className="whitespace-nowrap">{t.printResume}</span>
           </button>
-
-          <LangToggle lang={lang} setLang={setLang} isDark={isDark} size="sm" />
+          <LangToggle lang={lang} setLang={setLang} isDark={isDark} />
         </div>
 
-        {/* Mobile Actions */}
-        <div className="flex items-center space-x-2.5 lg:hidden">
-          <button
+        <div className="flex items-center gap-2 xl:hidden">
+          <IconButton
             onClick={toggleTheme}
-            className={`p-2 rounded-lg border transition-all ${
-              isDark
-                ? "bg-slate-900 border-slate-800 text-yellow-400"
-                : "bg-white border-slate-200 text-slate-700 shadow-xs"
-            }`}
+            label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            isDark={isDark}
           >
-            {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-          </button>
-
-          <LangToggle lang={lang} setLang={setLang} isDark={isDark} size="xs" />
-
-          <button
-            onClick={() => setMobileMenuOpen((v) => !v)}
-            className={`p-2 rounded-lg border transition-all ${
-              isDark
-                ? "text-slate-400 hover:text-slate-200 bg-slate-900 border-slate-800"
-                : "text-slate-600 hover:text-slate-900 bg-white border-slate-200 shadow-xs"
-            }`}
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </IconButton>
+          <LangToggle lang={lang} setLang={setLang} isDark={isDark} compact />
+          <IconButton
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+            isDark={isDark}
+            expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </IconButton>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className={`lg:hidden border-t overflow-hidden ${
+            initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+            className={`overflow-hidden border-t xl:hidden ${
               isDark
-                ? "border-slate-900 bg-slate-950/95"
-                : "border-slate-200 bg-white/95 shadow-md"
+                ? "border-slate-800 bg-slate-950"
+                : "border-slate-200 bg-slate-50"
             }`}
           >
-            <div className="px-4 py-4 space-y-3 flex flex-col">
+            <nav className="mx-auto grid max-w-7xl gap-1 px-4 py-4 sm:px-6">
               {navItems.map(({ id, label }) => (
                 <button
                   key={id}
+                  type="button"
                   onClick={() => handleNav(id)}
-                  className={`text-left py-2 text-xs font-mono uppercase tracking-wider ${
+                  className={`rounded-xl px-3 py-3 text-left font-mono text-sm transition-colors ${
                     isDark
-                      ? "text-slate-400 hover:text-slate-200"
-                      : "text-slate-600 hover:text-slate-900"
+                      ? "text-slate-300 hover:bg-slate-900 hover:text-white"
+                      : "text-slate-700 hover:bg-white hover:text-slate-950"
                   }`}
                 >
                   {label}
                 </button>
               ))}
-              <div
-                className={`pt-2 border-t ${isDark ? "border-slate-900" : "border-slate-100"}`}
+              <button
+                type="button"
+                onClick={() => {
+                  window.print();
+                  setMobileMenuOpen(false);
+                }}
+                className="mt-2 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-3 font-mono text-sm font-semibold text-white active:scale-[0.98]"
               >
-                <button
-                  onClick={() => {
-                    window.print();
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center space-x-1.5 text-xs font-mono ${
-                    isDark ? "text-blue-400" : "text-blue-600"
-                  }`}
-                >
-                  <FileDown className="w-3.5 h-3.5" />
-                  <span>{t.printResume}</span>
-                </button>
-              </div>
-            </div>
+                <FileDown className="h-4 w-4" />
+                {t.printResume}
+              </button>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
@@ -188,37 +166,72 @@ export function Header({ lang, setLang, isDark, toggleTheme }: HeaderProps) {
   );
 }
 
-interface LangToggleProps {
+interface IconButtonProps {
+  children: ReactNode;
+  onClick: () => void;
+  label: string;
+  isDark: boolean;
+  expanded?: boolean;
+}
+
+function IconButton({
+  children,
+  onClick,
+  label,
+  isDark,
+  expanded,
+}: IconButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-expanded={expanded}
+      title={label}
+      className={`grid h-9 w-9 place-items-center rounded-xl border transition-all active:scale-[0.96] ${
+        isDark
+          ? "border-slate-800 bg-slate-900/70 text-slate-300 hover:border-blue-500/50 hover:text-white"
+          : "border-slate-200 bg-white text-slate-700 hover:border-blue-500/40 hover:text-slate-950"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function LangToggle({
+  lang,
+  setLang,
+  isDark,
+  compact = false,
+}: {
   lang: Language;
   setLang: (lang: Language) => void;
   isDark: boolean;
-  size: "sm" | "xs";
-}
-
-function LangToggle({ lang, setLang, isDark, size }: LangToggleProps) {
-  const px = size === "sm" ? "px-2 py-1" : "px-2 py-0.5";
-  const fontSize = size === "sm" ? "text-[10px]" : "text-[9px]";
+  compact?: boolean;
+}) {
   return (
     <div
-      className={`p-0.5 rounded-lg border flex items-center ${
-        isDark ? "bg-slate-900 border-slate-800" : "bg-slate-100 border-slate-200"
+      className={`flex rounded-xl border p-1 ${
+        isDark ? "border-slate-800 bg-slate-900/70" : "border-slate-200 bg-white"
       }`}
+      aria-label="Language"
     >
-      {(["es", "en"] as Language[]).map((l) => (
+      {(["es", "en"] as Language[]).map((option) => (
         <button
-          key={l}
-          onClick={() => setLang(l)}
-          className={`${px} ${fontSize} font-mono rounded transition-all uppercase ${
-            lang === l
-              ? isDark
-                ? "bg-blue-500 text-slate-950 font-bold"
-                : "bg-blue-600 text-white font-bold"
+          key={option}
+          type="button"
+          onClick={() => setLang(option)}
+          aria-pressed={lang === option}
+          className={`${compact ? "px-1.5" : "px-2.5"} rounded-lg py-1 font-mono text-[10px] font-bold uppercase transition-colors ${
+            lang === option
+              ? "bg-blue-600 text-white"
               : isDark
-              ? "text-slate-400"
-              : "text-slate-500"
+                ? "text-slate-400 hover:text-white"
+                : "text-slate-500 hover:text-slate-950"
           }`}
         >
-          {l}
+          {option}
         </button>
       ))}
     </div>

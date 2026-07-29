@@ -4,7 +4,7 @@ Documenta las decisiones visuales del portafolio tal como están implementadas e
 
 ## Concepto
 
-**Estética de terminal / entorno de desarrollo.** El portafolio de un desarrollador debe parecerse a las herramientas que usa. De ahí vienen las decisiones que lo definen: tipografía monoespaciada para todo lo que es etiqueta o metadato, los tres puntos de ventana en la tarjeta del Hero, el logo `</>`, el nombre en `SNAKE_CASE` (`NOEL_ORTIZ`), la numeración de secciones (`01.`, `02.`…) y los patrones de rejilla sutiles de fondo.
+**Estética técnica editorial.** El portafolio combina la precisión de un entorno de desarrollo con una composición más editorial. La identidad se apoya en la tipografía monoespaciada para controles y metadatos, el logo `</>`, el nombre en `SNAKE_CASE` (`NOEL_ORTIZ`), superficies arquitectónicas y visuales abstractos de sistemas.
 
 La regla que sostiene el conjunto: **la mono etiqueta, la sans comunica**. Todo lo que sea navegación, estado, categoría o dato técnico va en JetBrains Mono; la prosa que se lee de corrido va en Inter.
 
@@ -31,7 +31,7 @@ Una sola regla ordena todo el color del sistema:
 
 > **El azul es marca. El ámbar y el esmeralda son estado.**
 
-- **Azul** (`blue-600` claro / `blue-400` oscuro) — **marca, y no significa nada**. Identidad, navegación, numeración de secciones, CTAs, enlaces, *hover*, anillo de foco. Si un elemento es azul, es porque pertenece a la marca; nunca porque comunique una condición.
+- **Azul** (`blue-600` claro / `blue-400` oscuro) — **marca, y no significa nada**. Identidad, navegación, CTAs, enlaces, *hover*, anillo de foco. Si un elemento es azul, es porque pertenece a la marca; nunca porque comunique una condición.
 - **Ámbar** (`amber-400` oscuro / `amber-700` claro) — **en curso**. Estudios y certificaciones sin terminar.
 - **Esmeralda** (`emerald-400` oscuro / `emerald-700` claro) — **completado o confirmado**. Titulaciones terminadas y el feedback de "copiado".
 
@@ -39,7 +39,7 @@ En oscuro los acentos suben de escalón para conservar contraste sobre el fondo 
 
 **La regla al añadir color:** si el elemento comunica una condición, usa ámbar o esmeralda; en cualquier otro caso, azul. Un estado nunca decora, y la marca nunca informa.
 
-Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el icono de sol del selector de tema, y el tercer punto del semáforo de ventana en el Hero, que es rojo/amarillo/verde por convención de sistema operativo.
+El amarillo del icono de sol escapa a la regla por ser literal, no semántico.
 
 ### Colores de marca
 
@@ -93,8 +93,8 @@ Cada paquete declara todos sus subconjuntos, pero con `unicode-range`: el navega
 
 | Uso | Clases |
 |---|---|
-| Nombre en el Hero | `text-4xl sm:text-6xl font-bold tracking-tight` |
-| Título de sección | `text-3xl font-bold tracking-tight` |
+| Nombre en el Hero | `text-[clamp(3rem,7vw,6.6rem)] font-bold leading-[0.92]` |
+| Título de sección | `text-4xl sm:text-5xl font-bold tracking-[-0.04em]` |
 | Título de tarjeta | `text-lg` / `text-xl font-bold` |
 | Prosa | `text-sm md:text-base leading-relaxed` |
 | Metadato mono | `text-xs` / `text-[11px]` |
@@ -104,20 +104,10 @@ Las etiquetas en mayúsculas llevan siempre `tracking-wider` o `tracking-widest`
 
 ## Layout
 
-**Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6`, aplicado **sobre el propio `<section>`** —no sobre un `div` interno— para que el borde inferior y el contenido compartan ancho. El Header y el Footer repiten el mismo contenedor.
-**Ritmo vertical:** `py-16 md:py-24` en las siete secciones, con `border-b` entre ellas. Contact no lo lleva por ser la última antes del pie.
+**Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6`. El Header, las secciones y el Footer comparten este ancho.
+**Ritmo vertical:** `py-24 md:py-32` en las secciones principales, con `border-b` entre ellas. Hero usa `min-h-[calc(100dvh-72px)]`; Contact no lleva borde inferior.
 
-**Numeración:** los eyebrows van de `01.` a `06.` (Hero no lleva número). Están escritos a mano en cada sección, así que **insertar una sección obliga a renumerar las siguientes** — y también a añadirla al `navItems` del Header y al `PrintOverlay`, que no heredan nada automáticamente.
-
-**Patrón de dos columnas** — la estructura dominante (About, Experience, Projects, Contact):
-
-```
-grid grid-cols-1 lg:grid-cols-12 gap-12
-├─ lg:col-span-4  → barra lateral fija (lg:sticky lg:top-24 h-fit)
-└─ lg:col-span-8  → contenido
-```
-
-La barra lateral repite siempre la misma tríada: eyebrow con icono + número, título `h2`, subtítulo mono.
+Cada sección utiliza una composición distinta para evitar repetición: Hero asimétrico, About con bento 7/5, Experience con encabezado fijo y trayectoria abierta, Project como feature visual, Skills con un marquee y filtro, Education por grupos y Contact como CTA de cierre. Toda composición de varias columnas cae explícitamente a una columna antes de `md`.
 
 **Espaciado:** se usa `gap` de flex/grid y utilidades `space-y-*`, no márgenes por elemento. Mantenlo así — evita colapsos de margen y hace el ritmo predecible.
 
@@ -162,9 +152,10 @@ Dos detalles que conviene no romper:
 
 Se usa [Motion](https://motion.dev) con moderación, en tres lugares:
 
-1. **Rotación de títulos en el Hero** — `AnimatePresence mode="wait"`, desplazamiento vertical ±20px, 0.3s, cada 4s.
-2. **Menú móvil** — despliegue de altura `0 → auto`.
-3. **Marquesinas de tecnologías** — CSS puro, no Motion. Dos keyframes (`marquee` y `marquee-reverse`) definidos en `@theme`, 110s lineales infinitos, en direcciones opuestas. Las listas se triplican en el JSX para que el bucle no muestre costuras, y unos degradados laterales difuminan los extremos.
+1. **Entrada del Hero** — Motion revela copy e imagen una sola vez, con `useReducedMotion`.
+2. **Revelado de secciones** — `Reveal.tsx` usa `whileInView`, una sola ejecución y transformaciones de opacidad/posición.
+3. **Menú móvil** — despliegue de altura `0 → auto`.
+4. **Marquesina de tecnologías** — CSS puro, una sola fila duplicada para cerrar el bucle. Se detiene con `prefers-reduced-motion`.
 
 Las transiciones de estado usan `transition-all` / `transition-colors` con la duración por defecto; el cambio de tema usa `duration-300`. Los *hover* elevan con `hover:-translate-y-0.5` o `hover:scale-[1.03]`, nunca más.
 
@@ -202,4 +193,3 @@ Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:o
 Ninguna pendiente. Las entradas anteriores —grises sin token, fuentes en CDN, ausencia de foco de teclado, contraste de los badges, pesos sintetizados y caracteres fuera del subconjunto latino— están todas cerradas.
 
 Al añadir deuda aquí, anota el dato que la hace verificable (el contraste medido, el peso que falta), no solo la descripción: así se comprueba si sigue viva sin volver a investigarla.
-

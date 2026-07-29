@@ -1,4 +1,5 @@
-import { Briefcase, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { Reveal } from "../motion/Reveal";
 import { uiTranslations } from "../../constants/translations";
 import { experiences } from "../../data";
 import type { Language } from "../../types";
@@ -14,122 +15,93 @@ export function Experience({ lang, isDark }: ExperienceProps) {
   return (
     <section
       id="experience"
-      className={`py-16 md:py-24 border-b max-w-7xl mx-auto px-4 sm:px-6 transition-all ${
-        isDark ? "border-slate-900/60" : "border-slate-200"
+      className={`mx-auto max-w-7xl border-b px-4 py-24 print:hidden sm:px-6 md:py-32 ${
+        isDark ? "border-slate-900" : "border-slate-200"
       }`}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-        {/* Sticky sidebar */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
-          <div
-            className={`flex items-center space-x-2 ${
-              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
-            }`}
-          >
-            <Briefcase className="w-4 h-4" />
-            <span className="font-mono text-xs uppercase tracking-wider">
-              02. {t.nav.experience}
-            </span>
-          </div>
+      <div className="grid gap-14 lg:grid-cols-12">
+        <Reveal className="h-fit lg:sticky lg:top-28 lg:col-span-4">
           <h2
-            className={`text-3xl font-bold tracking-tight ${
-              isDark ? "text-slate-100" : "text-slate-900"
+            className={`text-4xl font-bold tracking-[-0.04em] sm:text-5xl ${
+              isDark ? "text-slate-100" : "text-slate-950"
             }`}
           >
             {t.experience.title}
           </h2>
-          <p className={`text-xs font-mono ${isDark ? "text-slate-500" : "text-slate-500"}`}>
+          <p
+            className={`mt-5 max-w-sm text-base leading-relaxed ${
+              isDark ? "text-slate-400" : "text-slate-600"
+            }`}
+          >
             {t.experience.subtitle}
           </p>
-        </div>
+        </Reveal>
 
-        {/* Timeline */}
-        <div
-          className={`lg:col-span-8 space-y-10 relative border-l pl-4 md:pl-8 ml-2 ${
-            isDark ? "border-slate-900" : "border-slate-200"
-          }`}
-        >
-          {experiences.map((exp, idx) => {
-            return (
-              <div key={idx} className="relative group">
-                {/* Timeline bullet */}
-                <div
-                  className={`absolute -left-[21px] md:-left-[37px] top-1.5 w-3 h-3 rounded-full border-2 group-hover:scale-125 transition-all ${
-                    isDark
-                      ? "bg-slate-950 border-blue-400"
-                      : "bg-white border-blue-600"
-                  }`}
-                />
-
-                <div
-                  className={`p-6 rounded-2xl border transition-all duration-300 ${
-                    isDark
-                      ? "bg-slate-900/30 border-slate-800/60 group-hover:border-slate-800 hover:bg-slate-900/50"
-                      : "bg-white border-slate-200 group-hover:border-slate-300 hover:bg-slate-50/50 shadow-xs"
-                  }`}
-                >
-                  {/* Header */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
-                    <div>
-                      <span
-                        className={`font-mono text-xs font-bold uppercase tracking-wider ${
-                          isDark ? "text-blue-400" : "text-blue-600"
-                        }`}
-                      >
-                        {exp.period.replace("Present", t.experience.present)}
-                      </span>
-                      <h3
-                        className={`text-lg font-bold tracking-tight mt-1 ${
-                          isDark ? "text-slate-100" : "text-slate-900"
-                        }`}
-                      >
-                        {exp.role[lang]}
-                      </h3>
-                      <h4
-                        className={`text-xs font-mono mt-0.5 ${
-                          isDark ? "text-slate-400" : "text-slate-500"
-                        }`}
-                      >
-                        {exp.company}
-                      </h4>
-                    </div>
-                  </div>
-
-                  {/* Highlights */}
-                  <ul className="space-y-3">
-                    {exp.highlights[lang].map((highlight, hIdx) => (
-                      <li
-                        key={hIdx}
-                        className={`text-xs md:text-sm flex items-start gap-2.5 ${
-                          isDark ? "text-slate-300" : "text-slate-700"
-                        }`}
-                      >
-                        <ArrowRight
-                          className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${
-                            isDark ? "text-blue-400" : "text-blue-600"
-                          }`}
-                          aria-hidden="true"
-                        />
-                        <span className="leading-relaxed">{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* References note */}
-                  <div
-                    className={`mt-6 pt-4 border-t ${
-                      isDark ? "border-slate-950" : "border-slate-100"
+        <div className="lg:col-span-8">
+          {experiences.map((experience, index) => (
+            <Reveal key={experience.company} delay={index * 0.05}>
+              <article
+                className={`border-t py-10 first:pt-0 ${
+                  isDark ? "border-slate-800" : "border-slate-300"
+                }`}
+              >
+                <div className="grid gap-5 md:grid-cols-[10rem_1fr]">
+                  <p
+                    className={`font-mono text-xs font-semibold ${
+                      isDark ? "text-blue-400" : "text-blue-700"
                     }`}
                   >
-                    <p className="text-[11px] font-mono text-slate-500">
-                      {t.experience.referencesOnRequest}
+                    {experience.period.replace("Present", t.experience.present)}
+                  </p>
+                  <div>
+                    <h3
+                      className={`text-2xl font-bold tracking-[-0.03em] ${
+                        isDark ? "text-slate-100" : "text-slate-950"
+                      }`}
+                    >
+                      {experience.role[lang]}
+                    </h3>
+                    <p
+                      className={`mt-2 max-w-2xl font-mono text-xs leading-relaxed ${
+                        isDark ? "text-slate-500" : "text-slate-600"
+                      }`}
+                    >
+                      {experience.company}
                     </p>
+
+                    <div className="mt-7 grid gap-x-8 gap-y-4 md:grid-cols-2">
+                      {experience.highlights[lang].map((highlight) => (
+                        <p
+                          key={highlight}
+                          className={`flex items-start gap-3 text-sm leading-relaxed ${
+                            isDark ? "text-slate-300" : "text-slate-700"
+                          }`}
+                        >
+                          <ArrowUpRight
+                            className={`mt-1 h-3.5 w-3.5 shrink-0 ${
+                              isDark ? "text-blue-400" : "text-blue-700"
+                            }`}
+                            aria-hidden="true"
+                          />
+                          <span>{highlight}</span>
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              </article>
+            </Reveal>
+          ))}
+
+          <p
+            className={`border-t pt-6 font-mono text-xs ${
+              isDark
+                ? "border-slate-800 text-slate-500"
+                : "border-slate-300 text-slate-600"
+            }`}
+          >
+            {t.experience.referencesOnRequest}
+          </p>
         </div>
       </div>
     </section>

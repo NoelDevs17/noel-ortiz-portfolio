@@ -1,25 +1,10 @@
 import { useState } from "react";
-import { Code2, Search, Layers, X } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { Reveal } from "../motion/Reveal";
 import { uiTranslations } from "../../constants/translations";
 import { noelTechnologies } from "../../constants/technologies";
 import { languages } from "../../data";
 import type { Language, TechBadge } from "../../types";
-
-/**
- * One technology pill. The icon carries no colour of its own — it inherits the
- * badge's `text` via currentColor, so contrast is handled in one place.
- */
-function TechPill({ tech, className = "" }: { tech: TechBadge; className?: string }) {
-  const Icon = tech.icon;
-  return (
-    <div
-      className={`inline-flex items-center px-4 py-2 rounded-full font-mono text-xs font-extrabold uppercase tracking-wider ${tech.bg} ${tech.text} ${className}`}
-    >
-      <Icon className="w-3 h-3 mr-2 shrink-0" />
-      <span>{tech.name}</span>
-    </div>
-  );
-}
 
 interface SkillsProps {
   lang: Language;
@@ -29,251 +14,174 @@ interface SkillsProps {
 export function Skills({ lang, isDark }: SkillsProps) {
   const t = uiTranslations[lang];
   const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredTechs = noelTechnologies.filter((tech) =>
-    tech.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTechnologies = noelTechnologies.filter((technology) =>
+    technology.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
   );
-
-  const tripled = [
-    ...noelTechnologies,
-    ...noelTechnologies,
-    ...noelTechnologies,
-  ];
-  const tripledReversed = [
-    ...[...noelTechnologies].reverse(),
-    ...[...noelTechnologies].reverse(),
-    ...[...noelTechnologies].reverse(),
-  ];
+  const marqueeTechnologies = [...noelTechnologies, ...noelTechnologies];
 
   return (
     <section
       id="skills"
-      className={`py-16 md:py-24 border-b max-w-7xl mx-auto px-4 sm:px-6 transition-all ${
-        isDark ? "border-slate-900/60" : "border-slate-200"
+      className={`mx-auto max-w-7xl border-b py-24 print:hidden md:py-32 ${
+        isDark ? "border-slate-900" : "border-slate-200"
       }`}
     >
-      {/* Section header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div>
-          <div
-            className={`flex items-center space-x-2 mb-2 ${
-              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
-            }`}
-          >
-            <Code2 className="w-4 h-4 animate-pulse" />
-            <span className="font-mono text-xs uppercase tracking-widest">
-              04. {t.nav.skills}
-            </span>
-          </div>
+      <Reveal className="px-4 sm:px-6">
+        <div className="max-w-3xl">
           <h2
-            className={`text-3xl sm:text-4xl font-bold tracking-tight ${
-              isDark ? "text-slate-100" : "text-slate-900"
+            className={`text-4xl font-bold tracking-[-0.04em] sm:text-5xl ${
+              isDark ? "text-slate-100" : "text-slate-950"
             }`}
           >
             {t.skills.title}
           </h2>
           <p
-            className={`text-sm mt-2 max-w-xl font-sans ${
-              isDark ? "text-slate-400" : "text-slate-500"
+            className={`mt-4 text-base leading-relaxed md:text-lg ${
+              isDark ? "text-slate-400" : "text-slate-600"
             }`}
           >
             {t.skills.subtitle}
           </p>
         </div>
-      </div>
+      </Reveal>
 
-      {/* Marquee rows */}
-      <div className="relative w-full overflow-hidden mb-12 py-4 space-y-4">
-        <div
-          className={`absolute top-0 bottom-0 left-0 w-16 sm:w-28 z-20 pointer-events-none bg-gradient-to-r ${
-            isDark ? "from-slate-950 to-transparent" : "from-slate-50 to-transparent"
-          }`}
-        />
-        <div
-          className={`absolute top-0 bottom-0 right-0 w-16 sm:w-28 z-20 pointer-events-none bg-gradient-to-l ${
-            isDark ? "from-slate-950 to-transparent" : "from-slate-50 to-transparent"
-          }`}
-        />
-
-        <div className="flex w-max gap-3 animate-marquee whitespace-nowrap">
-          {tripled.map((tech, idx) => (
-            <TechPill key={`m1-${idx}`} tech={tech} className="shadow-xs" />
-          ))}
-        </div>
-        <div className="flex w-max gap-3 animate-marquee-reverse whitespace-nowrap">
-          {tripledReversed.map((tech, idx) => (
-            <TechPill key={`m2-${idx}`} tech={tech} className="shadow-xs" />
+      <div
+        className={`relative mt-12 overflow-hidden border-y py-4 ${
+          isDark ? "border-slate-900" : "border-slate-200"
+        }`}
+        aria-hidden="true"
+      >
+        <div className="flex w-max animate-marquee gap-2.5 pr-2.5">
+          {marqueeTechnologies.map((technology, index) => (
+            <TechPill key={`${technology.name}-${index}`} tech={technology} />
           ))}
         </div>
       </div>
 
-      {/* Interactive tech card */}
-      <div className="space-y-8">
-        <div
-          className={`relative overflow-hidden rounded-3xl border p-6 sm:p-8 transition-all ${
-            isDark
-              ? "bg-surface-card border-slate-900/60 shadow-xl"
-              : "bg-white border-slate-200/60 shadow-xs"
-          }`}
-        >
-          {/* Grid pattern overlay */}
+      <div className="px-4 sm:px-6">
+        <Reveal className="mt-12" delay={0.08}>
           <div
-            className={`absolute inset-0 pointer-events-none ${
-              isDark ? "opacity-[0.03]" : "opacity-[0.02]"
+            className={`rounded-[2rem] border p-6 sm:p-8 ${
+              isDark
+                ? "border-slate-800 bg-slate-900/35"
+                : "border-slate-200 bg-white"
             }`}
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-
-          {/* Card header */}
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800/40 mb-8">
-            <div className="flex items-center gap-4">
-              <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                  isDark
-                    ? "bg-slate-950/80 border-slate-800/80"
-                    : "bg-slate-50 border-slate-200"
-                }`}
-              >
-                <Layers className="w-5 h-5 text-blue-500" />
-              </div>
+          >
+            <div className="grid items-end gap-6 md:grid-cols-[1fr_20rem]">
               <div>
-                <span
-                  className={`text-[10px] font-mono font-bold tracking-widest uppercase block ${
-                    isDark ? "text-blue-400" : "text-blue-600"
+                <h3
+                  className={`text-2xl font-bold tracking-[-0.03em] ${
+                    isDark ? "text-slate-100" : "text-slate-950"
                   }`}
                 >
                   {t.skills.allTech}
-                </span>
-                <h3
-                  className={`text-xl font-bold tracking-tight ${
-                    isDark ? "text-slate-100" : "text-slate-900"
-                  }`}
-                >
-                  {t.skills.title}
                 </h3>
+                <p className="mt-2 font-mono text-xs text-slate-500">
+                  {filteredTechnologies.length} {t.skills.found}
+                </p>
               </div>
+
+              <label className="relative block">
+                <span className="sr-only">{t.skills.searchPlaceholder}</span>
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder={t.skills.searchPlaceholder}
+                  className={`w-full rounded-xl border py-3 pl-11 pr-11 font-mono text-xs transition-colors ${
+                    isDark
+                      ? "border-slate-700 bg-slate-950 text-slate-100 placeholder:text-slate-500"
+                      : "border-slate-300 bg-slate-50 text-slate-950 placeholder:text-slate-500"
+                  }`}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    aria-label={t.skills.clearSearch}
+                    className="absolute right-3 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-lg text-slate-500 hover:text-blue-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </label>
             </div>
 
-            {/* Search */}
-            <div className="relative w-full md:w-80">
-              <span
-                className={`absolute inset-y-0 left-3.5 flex items-center ${
-                  isDark ? "text-slate-500" : "text-slate-400"
-                }`}
-              >
-                <Search className="w-4 h-4" />
-              </span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t.skills.searchPlaceholder}
-                className={`w-full pl-10 pr-10 py-2.5 text-xs rounded-full border font-mono transition-all placeholder:text-slate-500 ${
-                  isDark
-                    ? "bg-slate-950/80 text-slate-200 border-slate-800/80"
-                    : "bg-slate-50/60 text-slate-800 border-slate-200 shadow-xs"
-                }`}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  aria-label={t.skills.clearSearch}
-                  className="absolute inset-y-0 right-3.5 flex items-center text-slate-500 hover:text-slate-700 transition-colors"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+            <div className="mt-8 flex flex-wrap gap-2.5">
+              {filteredTechnologies.map((technology) => (
+                <TechPill key={technology.name} tech={technology} interactive />
+              ))}
+              {filteredTechnologies.length === 0 && (
+                <div className="w-full py-12 text-center">
+                  <p
+                    className={`font-mono text-sm ${
+                      isDark ? "text-slate-400" : "text-slate-600"
+                    }`}
+                  >
+                    {t.skills.noMatch}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="mt-5 rounded-xl bg-blue-600 px-4 py-2.5 font-mono text-xs font-bold text-white active:scale-[0.98]"
+                  >
+                    {t.skills.all}
+                  </button>
+                </div>
               )}
             </div>
           </div>
+        </Reveal>
 
-          {/* Tech pills grid */}
-          <div className="relative z-10 flex flex-wrap gap-2.5 sm:gap-3 justify-center md:justify-start">
-            {filteredTechs.map((tech, idx) => (
-              <TechPill
-                key={idx}
-                tech={tech}
-                className="transition-all duration-300 transform hover:scale-[1.03] hover:shadow-sm"
-              />
-            ))}
-
-            {filteredTechs.length === 0 && (
-              <div className="w-full py-12 text-center">
-                <p
-                  className={`text-sm font-mono ${
-                    isDark ? "text-slate-500" : "text-slate-400"
-                  }`}
-                >
-                  {t.skills.noMatch}
-                </p>
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className={`mt-4 px-4 py-2 rounded-full font-mono text-xs font-bold border transition-colors ${
-                    isDark
-                      ? "bg-slate-950 border-slate-800 text-slate-300 hover:text-blue-400 hover:border-blue-500/30"
-                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:text-blue-600"
-                  }`}
-                >
-                  {t.skills.all}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Language proficiency */}
-        <div
-          className={`p-6 rounded-3xl border transition-all ${
-            isDark
-              ? "bg-surface-card/50 border-slate-900/60"
-              : "bg-white border-slate-200/50 shadow-xs"
-          }`}
-        >
-          <h4
-            className={`font-mono text-xs font-bold uppercase tracking-widest mb-4 pb-2 border-b ${
-              isDark
-                ? "text-blue-400 border-slate-900/60"
-                : "text-blue-600 border-slate-100"
+        <Reveal className="mt-8" delay={0.14}>
+          <div
+            className={`grid gap-4 border-t pt-8 sm:grid-cols-2 ${
+              isDark ? "border-slate-800" : "border-slate-300"
             }`}
           >
-            {t.skills.languages}
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {languages[lang].map((l, idx) => (
+            {languages[lang].map((language) => (
               <div
-                key={idx}
-                className={`p-3.5 rounded-2xl border flex items-center justify-between transition-colors ${
-                  isDark
-                    ? "bg-slate-950/30 border-slate-900/60 hover:border-slate-800/40"
-                    : "bg-slate-50/60 border-slate-100 hover:border-slate-200 hover:bg-white"
-                }`}
+                key={language.name}
+                className="flex items-baseline justify-between gap-5"
               >
-                <span
-                  className={`font-sans text-xs font-medium ${
-                    isDark ? "text-slate-200" : "text-slate-800"
+                <h3
+                  className={`text-base font-semibold ${
+                    isDark ? "text-slate-200" : "text-slate-900"
                   }`}
                 >
-                  {l.name}
-                </span>
-                <span
-                  className={`font-mono text-[10px] px-2.5 py-0.5 rounded-lg border ${
-                    isDark
-                      ? "text-slate-300 bg-slate-800/40 border-slate-700/50"
-                      : "text-slate-600 bg-slate-100 border-slate-200"
-                  }`}
-                >
-                  {l.level}
-                </span>
+                  {language.name}
+                </h3>
+                <p className="text-right font-mono text-[11px] text-slate-500">
+                  {language.level}
+                </p>
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
+function TechPill({
+  tech,
+  interactive = false,
+}: {
+  tech: TechBadge;
+  interactive?: boolean;
+}) {
+  const Icon = tech.icon;
+  return (
+    <span
+      className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 font-mono text-[11px] font-extrabold uppercase tracking-wider ${tech.bg} ${tech.text} ${
+        interactive
+          ? "transition-transform duration-300 hover:-translate-y-0.5"
+          : ""
+      }`}
+    >
+      <Icon className="h-3 w-3 shrink-0" />
+      {tech.name}
+    </span>
+  );
+}

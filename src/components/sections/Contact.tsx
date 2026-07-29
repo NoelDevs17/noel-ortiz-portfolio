@@ -1,5 +1,6 @@
-import { type ReactNode } from "react";
-import { Mail, Check, Copy, Send } from "lucide-react";
+import type { ReactNode } from "react";
+import { Check, Copy, Github, Linkedin, Send } from "lucide-react";
+import { Reveal } from "../motion/Reveal";
 import { uiTranslations } from "../../constants/translations";
 import { personalInfo } from "../../data";
 import type { Language } from "../../types";
@@ -23,170 +24,124 @@ export function Contact({
   return (
     <section
       id="contact"
-      className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 print:hidden"
+      className="mx-auto max-w-7xl px-4 py-24 print:hidden sm:px-6 md:py-32"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-        {/* Sticky sidebar */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
+      <Reveal>
+        <div
+          className={`relative overflow-hidden rounded-[2rem] border p-7 sm:p-10 md:p-14 ${
+            isDark
+              ? "border-slate-800 bg-slate-900/45"
+              : "border-slate-200 bg-white"
+          }`}
+        >
           <div
-            className={`flex items-center space-x-2 ${
-              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
+            className={`absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl ${
+              isDark ? "bg-blue-600/12" : "bg-blue-500/10"
             }`}
-          >
-            <Mail className="w-4 h-4" />
-            <span className="font-mono text-xs uppercase tracking-wider">
-              06. {t.nav.contact}
-            </span>
-          </div>
-          <h2
-            className={`text-3xl font-bold tracking-tight ${
-              isDark ? "text-slate-100" : "text-slate-900"
-            }`}
-          >
-            {t.contact.title}
-          </h2>
-          <p
-            className={`text-xs font-sans leading-relaxed ${
-              isDark ? "text-slate-400" : "text-slate-600"
-            }`}
-          >
-            {t.contact.subtitle}
-          </p>
-        </div>
+            aria-hidden="true"
+          />
 
-        {/* Contact cards */}
-        <div className="lg:col-span-8">
-          <div
-            className={`p-6 md:p-8 rounded-3xl border transition-all relative overflow-hidden ${
-              isDark
-                ? "bg-slate-950/40 border-slate-900"
-                : "bg-slate-50/50 border-slate-200/80 shadow-xs"
-            }`}
-          >
-            {/* Grid pattern overlay */}
-            <div
-              className={`absolute inset-0 pointer-events-none ${
-                isDark ? "opacity-[0.05]" : "opacity-[0.02]"
-              }`}
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-              }}
-            />
+          <div className="relative grid gap-12 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-8">
+              <h2
+                className={`text-4xl font-bold tracking-[-0.05em] sm:text-5xl md:text-6xl ${
+                  isDark ? "text-slate-100" : "text-slate-950"
+                }`}
+              >
+                {t.contact.title}
+              </h2>
+              <p
+                className={`mt-5 max-w-xl text-base leading-relaxed md:text-lg ${
+                  isDark ? "text-slate-400" : "text-slate-600"
+                }`}
+              >
+                {t.contact.subtitle}
+              </p>
 
-            <div className="relative z-10 max-w-md mx-auto">
-              {/* Email card */}
-              <ContactCard
-                isDark={isDark}
-                icon={<Mail className="w-5 h-5" />}
-                label={t.contact.emailLabel}
-                valuePrimary={emailUser}
-                valueSecondary={`@${emailDomain}`}
-                copied={copiedEmail}
-                onCopy={onCopyEmail}
-                copyLabel={t.contact.copyBtn}
-                copiedLabel={t.contact.copiedBtn}
-                actionLabel={t.contact.sendBtn}
-                actionHref={`mailto:${personalInfo.email}`}
-              />
+              <p
+                className={`mt-10 break-words text-[clamp(1.6rem,5vw,4.2rem)] font-bold leading-[0.95] tracking-[-0.055em] ${
+                  isDark ? "text-slate-100" : "text-slate-950"
+                }`}
+              >
+                {emailUser}
+                <wbr />
+                <span className={isDark ? "text-blue-400" : "text-blue-700"}>
+                  @{emailDomain}
+                </span>
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 lg:col-span-4">
+              <a
+                href={`mailto:${personalInfo.email}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-blue-600 px-5 font-mono text-sm font-bold text-white transition-colors hover:bg-blue-500 active:scale-[0.98]"
+              >
+                <Send className="h-4 w-4" />
+                {t.contact.sendBtn}
+              </a>
+              <button
+                type="button"
+                onClick={onCopyEmail}
+                className={`inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-xl border px-5 font-mono text-sm font-semibold transition-colors active:scale-[0.98] ${
+                  isDark
+                    ? "border-slate-700 bg-slate-950/50 text-slate-200 hover:border-blue-500/60"
+                    : "border-slate-300 bg-slate-50 text-slate-800 hover:border-blue-500/50"
+                }`}
+              >
+                {copiedEmail ? (
+                  <Check className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                {copiedEmail ? t.contact.copiedBtn : t.contact.copyBtn}
+              </button>
+
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <SocialLink
+                  href={personalInfo.github}
+                  label="GitHub"
+                  icon={<Github className="h-4 w-4" />}
+                  isDark={isDark}
+                />
+                <SocialLink
+                  href={personalInfo.linkedin}
+                  label="LinkedIn"
+                  icon={<Linkedin className="h-4 w-4" />}
+                  isDark={isDark}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
 
-interface ContactCardProps {
-  isDark: boolean;
-  icon: ReactNode;
-  label: string;
-  valuePrimary: string;
-  valueSecondary: string;
-  copied: boolean;
-  onCopy: () => void;
-  copyLabel: string;
-  copiedLabel: string;
-  actionLabel: string;
-  actionHref: string;
-}
-
-function ContactCard({
-  isDark,
-  icon,
+function SocialLink({
+  href,
   label,
-  valuePrimary,
-  valueSecondary,
-  copied,
-  onCopy,
-  copyLabel,
-  copiedLabel,
-  actionLabel,
-  actionHref,
-}: ContactCardProps) {
-  const cardCls = `p-6 md:p-8 rounded-2xl border flex flex-col justify-between transition-all group ${
-    isDark
-      ? "bg-surface-card/90 border-slate-800/60 hover:border-slate-700/80 hover:shadow-lg hover:shadow-black/20"
-      : "bg-white border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md"
-  }`;
-
-  const iconWrapCls = `p-3 rounded-xl border flex items-center justify-center shrink-0 ${
-    isDark
-      ? "bg-slate-900 border-slate-800/80 text-slate-300 group-hover:text-blue-400 group-hover:border-blue-500/30 transition-colors"
-      : "bg-slate-50 border-slate-200 text-slate-700 group-hover:text-blue-600 group-hover:border-blue-300 transition-colors"
-  }`;
-
-  const copyBtnCls = `flex-1 py-2.5 px-4 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 border cursor-pointer ${
-    isDark
-      ? "bg-surface-raised hover:bg-surface-raised-hover border-slate-800 text-slate-300 active:bg-slate-950"
-      : "bg-slate-50 hover:bg-slate-100 border-slate-300 text-slate-700 active:bg-slate-200"
-  }`;
-
-  const actionCls = `flex-1 py-2.5 px-4 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm ${
-    isDark
-      ? "bg-blue-600 hover:bg-blue-500 text-white active:bg-blue-700"
-      : "bg-blue-600 hover:bg-blue-700 text-white active:bg-blue-800"
-  }`;
-
+  icon,
+  isDark,
+}: {
+  href: string;
+  label: string;
+  icon: ReactNode;
+  isDark: boolean;
+}) {
   return (
-    <div className={cardCls}>
-      <div>
-        <div className="flex items-center justify-between gap-4 mb-8">
-          <div className={iconWrapCls}>{icon}</div>
-          <span className="font-mono text-[10px] tracking-widest text-slate-500 font-bold uppercase">
-            {label}
-          </span>
-        </div>
-
-        <div className="space-y-1 mb-8">
-          <h3
-            className={`text-2xl font-extrabold tracking-tight leading-none ${
-              isDark ? "text-slate-100" : "text-slate-900"
-            }`}
-          >
-            {valuePrimary}
-          </h3>
-          <p className="text-xs font-mono font-medium text-slate-500">{valueSecondary}</p>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <button onClick={onCopy} className={copyBtnCls}>
-          {copied ? (
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-          ) : (
-            <Copy className="w-3.5 h-3.5" />
-          )}
-          <span>{copied ? copiedLabel : copyLabel}</span>
-        </button>
-
-        <a href={actionHref} className={actionCls}>
-          <Send className="w-3.5 h-3.5" />
-          <span>{actionLabel}</span>
-        </a>
-      </div>
-    </div>
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 font-mono text-xs transition-colors ${
+        isDark
+          ? "border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white"
+          : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-950"
+      }`}
+    >
+      {icon}
+      {label}
+    </a>
   );
 }
