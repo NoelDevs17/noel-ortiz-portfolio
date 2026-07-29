@@ -1,6 +1,6 @@
-import { GraduationCap } from "lucide-react";
+import { Reveal } from "../motion/Reveal";
 import { uiTranslations } from "../../constants/translations";
-import { educations, certifications } from "../../data";
+import { certifications, educations } from "../../data";
 import type { Language } from "../../types";
 
 interface EducationProps {
@@ -10,162 +10,147 @@ interface EducationProps {
 
 export function Education({ lang, isDark }: EducationProps) {
   const t = uiTranslations[lang];
+  const splitIndex = Math.ceil(certifications.length / 2);
+  const certificationGroups = [
+    certifications.slice(0, splitIndex),
+    certifications.slice(splitIndex),
+  ];
 
   return (
     <section
       id="education"
-      className={`py-16 md:py-24 border-b max-w-7xl mx-auto px-4 sm:px-6 transition-all ${
-        isDark ? "border-slate-900/60" : "border-slate-200"
+      className={`mx-auto max-w-7xl border-b px-4 py-24 print:hidden sm:px-6 md:py-32 ${
+        isDark ? "border-slate-900" : "border-slate-200"
       }`}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-        {/* Sticky sidebar */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
-          <div
-            className={`flex items-center space-x-2 ${
-              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
-            }`}
-          >
-            <GraduationCap className="w-4 h-4" />
-            <span className="font-mono text-xs uppercase tracking-wider">
-              05. {t.nav.education}
-            </span>
-          </div>
+      <Reveal>
+        <div className="max-w-3xl">
           <h2
-            className={`text-3xl font-bold tracking-tight ${
-              isDark ? "text-slate-100" : "text-slate-900"
+            className={`text-4xl font-bold tracking-[-0.04em] sm:text-5xl ${
+              isDark ? "text-slate-100" : "text-slate-950"
             }`}
           >
             {t.education.title}
           </h2>
-          <p className={`text-xs font-mono ${isDark ? "text-slate-500" : "text-slate-500"}`}>
+          <p
+            className={`mt-4 text-base leading-relaxed md:text-lg ${
+              isDark ? "text-slate-400" : "text-slate-600"
+            }`}
+          >
             {t.education.certsTitle}
           </p>
         </div>
+      </Reveal>
 
-        {/* Content */}
-        <div className="lg:col-span-8 space-y-10">
-
-          {/* Academic cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {educations.map((edu, idx) => (
-              <div
-                key={idx}
-                className={`p-5 rounded-2xl border transition-all ${
-                  isDark
-                    ? "bg-slate-900/10 border-slate-900/40 hover:border-slate-800/40 hover:bg-slate-900/20"
-                    : "bg-slate-50/30 border-slate-200/30 shadow-xs hover:border-slate-200/60 hover:bg-white"
+      <Reveal className="mt-14 grid gap-4 md:grid-cols-2" delay={0.06}>
+        {educations.map((education) => {
+          const inProgress = education.status.en === "In Progress";
+          return (
+            <article
+              key={education.degree.en}
+              className={`rounded-2xl border p-6 ${
+                isDark
+                  ? "border-slate-800 bg-slate-900/35"
+                  : "border-slate-200 bg-white"
+              }`}
+            >
+              <p
+                className={`font-mono text-xs font-semibold ${
+                  isDark ? "text-blue-400" : "text-blue-700"
+                }`}
+              >
+                {education.period}
+              </p>
+              <h3
+                className={`mt-5 text-xl font-bold tracking-[-0.025em] ${
+                  isDark ? "text-slate-100" : "text-slate-950"
+                }`}
+              >
+                {education.degree[lang]}
+              </h3>
+              <p
+                className={`mt-2 font-mono text-xs leading-relaxed ${
+                  isDark ? "text-slate-500" : "text-slate-600"
+                }`}
+              >
+                {education.institution}
+              </p>
+              <p
+                className={`mt-6 inline-flex items-center gap-2 font-mono text-xs ${
+                  inProgress
+                    ? isDark
+                      ? "text-amber-400"
+                      : "text-amber-700"
+                    : isDark
+                      ? "text-emerald-400"
+                      : "text-emerald-700"
                 }`}
               >
                 <span
-                  className={`font-mono text-[10px] font-semibold block mb-1 ${
-                    isDark ? "text-blue-400" : "text-blue-600"
+                  className={`h-2 w-2 rounded-full ${
+                    inProgress
+                      ? isDark
+                        ? "bg-amber-400"
+                        : "bg-amber-600"
+                      : isDark
+                        ? "bg-emerald-400"
+                        : "bg-emerald-600"
                   }`}
-                >
-                  {edu.period}
-                </span>
-                <h3
-                  className={`text-sm font-semibold font-sans tracking-tight leading-snug ${
-                    isDark ? "text-slate-100" : "text-slate-900"
-                  }`}
-                >
-                  {edu.degree[lang]}
-                </h3>
-                <h4
-                  className={`text-xs mt-1 font-mono ${
-                    isDark ? "text-slate-400" : "text-slate-500"
-                  }`}
-                >
-                  {edu.institution}
-                </h4>
-                <div
-                  className={`mt-4 pt-3.5 border-t flex justify-between items-center text-[10px] font-mono ${
-                    isDark ? "border-slate-950" : "border-slate-100"
-                  }`}
-                >
-                  <span className="text-slate-500">{t.education.academicStatus}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded-lg border ${
-                      edu.status.en === "In Progress"
-                        ? isDark
-                          ? "bg-amber-500/10 border-amber-500/10 text-amber-400"
-                          : "bg-amber-50 border-amber-200 text-amber-700"
-                        : isDark
-                        ? "bg-emerald-500/10 border-emerald-500/10 text-emerald-400"
-                        : "bg-emerald-50 border-emerald-200 text-emerald-700"
+                  aria-hidden="true"
+                />
+                {education.status[lang]}
+              </p>
+            </article>
+          );
+        })}
+      </Reveal>
+
+      <Reveal className="mt-16" delay={0.12}>
+        <h3
+          className={`text-2xl font-bold tracking-[-0.03em] ${
+            isDark ? "text-slate-100" : "text-slate-950"
+          }`}
+        >
+          {t.education.certsTitle}
+        </h3>
+
+        <div
+          className={`mt-8 grid gap-10 border-t pt-8 md:grid-cols-2 md:gap-14 ${
+            isDark ? "border-slate-800" : "border-slate-300"
+          }`}
+        >
+          {certificationGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="space-y-7">
+              {group.map((certification) => (
+                <article key={`${certification.title}-${certification.period}`}>
+                  <h4
+                    className={`text-sm font-semibold leading-relaxed ${
+                      isDark ? "text-slate-200" : "text-slate-900"
                     }`}
                   >
-                    {edu.status[lang]}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Certifications */}
-          <div className="pt-4">
-            <h3
-              className={`font-mono text-xs font-bold uppercase tracking-widest mb-4 pb-2 border-b flex justify-between items-center ${
-                isDark
-                  ? "text-blue-400 border-slate-950"
-                  : "text-blue-600 border-slate-100"
-              }`}
-            >
-              <span>{t.education.certsTitle}</span>
-              <span className="text-[10px] font-normal text-slate-500">
-                {certifications.length} total
-              </span>
-            </h3>
-
-            <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto pr-1">
-              {certifications.map((cert, idx) => (
-                <div
-                  key={idx}
-                  className={`p-3.5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
-                    isDark
-                      ? "bg-slate-900/10 border-slate-900/40 hover:border-slate-800/40 hover:bg-slate-900/30"
-                      : "bg-slate-50/60 border-slate-200/30 shadow-xs hover:border-slate-300 hover:bg-white"
-                  }`}
-                >
-                  <div>
-                    <h4
-                      className={`text-xs font-semibold leading-snug ${
-                        isDark ? "text-slate-200" : "text-slate-800"
-                      }`}
-                    >
-                      {cert.title}
-                    </h4>
-                    {cert.institution && (
+                    {certification.title}
+                  </h4>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-slate-500">
+                    <span>{certification.period}</span>
+                    {certification.institution && (
+                      <span>{certification.institution}</span>
+                    )}
+                    {certification.status && (
                       <span
-                        className={`text-[10px] font-mono mt-0.5 block ${
-                          isDark ? "text-slate-500" : "text-slate-400"
-                        }`}
+                        className={
+                          isDark ? "text-amber-400" : "text-amber-700"
+                        }
                       >
-                        {cert.institution}
+                        {certification.status[lang]}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-3 font-mono text-[10px] shrink-0">
-                    <span className="text-slate-500">{cert.period}</span>
-                    {cert.status && (
-                      <span
-                        className={`px-2 py-0.5 rounded-lg border ${
-                          isDark
-                            ? "bg-amber-500/15 text-amber-400 border-amber-500/10"
-                            : "bg-amber-50 text-amber-700 border-amber-200"
-                        }`}
-                      >
-                        {cert.status[lang]}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                </article>
               ))}
             </div>
-          </div>
+          ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

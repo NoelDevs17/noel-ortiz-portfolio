@@ -83,7 +83,7 @@ export const uiTranslations = {
     contact: {
       title: "Contact",
       subtitle:
-        "If you have a proposal, question, or just want to say hello — my inbox is always ready.",
+        "If you have a proposal, question, or just want to say hello, my inbox is always ready.",
       emailLabel: "EMAIL",
       copyBtn: "Copy",
       copiedBtn: "Copied!",
@@ -100,7 +100,7 @@ export const uiTranslations = {
     copy: "Copy",
     copied: "Copied!",
     printResume: "Print/Export CV",
-    footer: "© 2026 Noel Ortiz. All rights reserved. Designed for excellence.",
+    footer: "© 2026 Noel Ortiz. All rights reserved.",
   },
   es: {
     nav: {
@@ -186,7 +186,7 @@ export const uiTranslations = {
     contact: {
       title: "Contacto",
       subtitle:
-        "Si tienes una propuesta, duda o solo quieres saludar — mi bandeja siempre está lista.",
+        "Si tienes una propuesta, duda o solo quieres saludar, mi bandeja siempre está lista.",
       emailLabel: "EMAIL",
       copyBtn: "Copiar",
       copiedBtn: "¡Copiado!",

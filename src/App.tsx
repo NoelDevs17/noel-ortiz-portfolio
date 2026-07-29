@@ -29,7 +29,7 @@ export default function App() {
   return (
     <div
       id="landing-root"
-      className={`min-h-screen font-sans selection:bg-blue-500 selection:text-white flex flex-col justify-between scroll-smooth transition-colors duration-300 ${
+      className={`flex min-h-[100dvh] flex-col justify-between overflow-x-clip font-sans selection:bg-blue-500 selection:text-white scroll-smooth transition-colors duration-300 ${
         isDark ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"
       }`}
     >
@@ -40,7 +40,7 @@ export default function App() {
         toggleTheme={toggleTheme}
       />
 
-      <main className="flex-grow">
+      <main className="flex-grow overflow-x-clip">
         <Hero
           lang={lang}
           isDark={isDark}

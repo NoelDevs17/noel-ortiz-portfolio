@@ -1,4 +1,5 @@
-import { Terminal } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { Reveal } from "../motion/Reveal";
 import { uiTranslations } from "../../constants/translations";
 import { personalInfo } from "../../data";
 import type { Language } from "../../types";
@@ -10,122 +11,101 @@ interface AboutProps {
 
 export function About({ lang, isDark }: AboutProps) {
   const t = uiTranslations[lang];
+  const summary = personalInfo.summary[lang];
 
   return (
     <section
       id="about"
-      className={`py-16 md:py-24 border-b max-w-7xl mx-auto px-4 sm:px-6 transition-all ${
-        isDark ? "border-slate-900/60" : "border-slate-200"
+      className={`mx-auto max-w-7xl border-b px-4 py-24 print:hidden sm:px-6 md:py-32 ${
+        isDark ? "border-slate-900" : "border-slate-200"
       }`}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-        {/* Sticky sidebar */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-4">
-          <div
-            className={`flex items-center space-x-2 ${
-              isDark ? "text-blue-400" : "text-blue-600 font-semibold"
-            }`}
-          >
-            <Terminal className="w-4 h-4" />
-            <span className="font-mono text-xs uppercase tracking-wider">
-              01. {t.nav.about}
-            </span>
-          </div>
+      <Reveal>
+        <div className="max-w-3xl">
           <h2
-            className={`text-3xl font-bold tracking-tight ${
-              isDark ? "text-slate-100" : "text-slate-900"
+            className={`text-4xl font-bold tracking-[-0.04em] sm:text-5xl ${
+              isDark ? "text-slate-100" : "text-slate-950"
             }`}
           >
             {t.profile.title}
           </h2>
-          <p className={`text-xs font-mono ${isDark ? "text-slate-500" : "text-slate-500"}`}>
+          <p
+            className={`mt-4 max-w-2xl text-base leading-relaxed md:text-lg ${
+              isDark ? "text-slate-400" : "text-slate-600"
+            }`}
+          >
             {t.profile.subtitle}
           </p>
         </div>
+      </Reveal>
 
-        {/* Content */}
-        <div className="lg:col-span-8 space-y-8">
-
-          {/* Summary paragraphs */}
-          <div
-            className={`space-y-4 text-sm md:text-base leading-relaxed ${
-              isDark ? "text-slate-300" : "text-slate-700"
+      <div className="mt-14 grid gap-12 lg:grid-cols-12">
+        <Reveal className="lg:col-span-5" delay={0.05}>
+          <p
+            className={`text-xl font-medium leading-relaxed tracking-[-0.02em] md:text-2xl ${
+              isDark ? "text-slate-200" : "text-slate-800"
             }`}
           >
-            {personalInfo.summary[lang].map((p, idx) => (
-              <p
-                key={idx}
-                className={`border-l-2 pl-4 py-1 transition-all ${
-                  isDark
-                    ? "border-slate-800 hover:border-blue-500"
-                    : "border-slate-200 hover:border-blue-600"
-                }`}
-              >
-                {p}
-              </p>
-            ))}
-          </div>
+            {summary[0]}
+          </p>
 
-          {/* Architecture values grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-            {t.profile.values.map((val, idx) => (
-              <div
-                key={idx}
-                className={`p-5 rounded-xl border transition-all group ${
-                  isDark
-                    ? "bg-slate-900/40 border-slate-800/60 hover:border-blue-500/30 hover:bg-slate-900/80"
-                    : "bg-white border-slate-200 shadow-sm hover:border-blue-600/30 hover:bg-slate-50/40 hover:shadow-xs"
-                }`}
-              >
-                <span className="font-mono text-[10px] block mb-1 uppercase tracking-widest text-slate-500">
-                  Philosophy {idx + 1}
-                </span>
-                <h4
-                  className={`text-sm font-bold transition-all mb-2 ${
-                    isDark
-                      ? "text-slate-100 group-hover:text-blue-400"
-                      : "text-slate-900 group-hover:text-blue-700"
-                  }`}
-                >
-                  {val.title}
-                </h4>
-                <p
-                  className={`text-xs leading-relaxed ${
-                    isDark ? "text-slate-400" : "text-slate-600"
-                  }`}
-                >
-                  {val.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Core competency badges */}
-          <div className="pt-4 space-y-3">
-            <h3
-              className={`text-xs font-mono uppercase tracking-widest ${
-                isDark ? "text-slate-500" : "text-slate-500"
+          <details
+            className={`group mt-8 border-t pt-5 ${
+              isDark ? "border-slate-800" : "border-slate-300"
+            }`}
+          >
+            <summary
+              className={`flex cursor-pointer list-none items-center justify-between gap-4 font-mono text-sm font-semibold ${
+                isDark ? "text-slate-300" : "text-slate-700"
               }`}
             >
-              {t.profile.methodologyTitle}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {t.profile.valuesList.map((strength, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg border transition-all ${
-                    isDark
-                      ? "bg-slate-950 border-slate-900 text-slate-400 hover:text-blue-400 hover:border-blue-500/20"
-                      : "bg-white border-slate-200 text-slate-600 hover:text-blue-700 hover:border-blue-400 hover:shadow-xs"
-                  }`}
-                >
-                  {strength}
-                </span>
+              {lang === "es" ? "Ver enfoque completo" : "Read the full approach"}
+              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            </summary>
+            <div
+              className={`mt-5 space-y-4 text-sm leading-relaxed ${
+                isDark ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
+              {summary.slice(1).map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
+          </details>
+        </Reveal>
+
+        <Reveal className="lg:col-span-7" delay={0.12}>
+          <div className="grid grid-flow-dense grid-cols-1 gap-3 md:grid-cols-12">
+            {t.profile.values.map((value, index) => {
+              const span = index === 0 || index === 3 ? "md:col-span-7" : "md:col-span-5";
+              return (
+                <article
+                  key={value.title}
+                  className={`${span} group rounded-2xl border p-6 transition-all duration-300 ${
+                    isDark
+                      ? "border-slate-800 bg-slate-900/35 hover:border-blue-500/40 hover:bg-slate-900/70"
+                      : "border-slate-200 bg-white hover:border-blue-500/35 hover:bg-slate-50"
+                  }`}
+                >
+                  <h3
+                    className={`text-lg font-bold tracking-[-0.025em] ${
+                      isDark ? "text-slate-100" : "text-slate-950"
+                    }`}
+                  >
+                    {value.title}
+                  </h3>
+                  <p
+                    className={`mt-3 text-sm leading-relaxed ${
+                      isDark ? "text-slate-400" : "text-slate-600"
+                    }`}
+                  >
+                    {value.desc}
+                  </p>
+                </article>
+              );
+            })}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
