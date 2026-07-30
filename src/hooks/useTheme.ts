@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import type { MouseEvent } from "react";
+import { useReducedMotion } from "framer-motion";
 
 export type Theme = "dark" | "light";
 
@@ -39,9 +41,22 @@ function readTheme(fallback: Theme = "dark"): Theme {
     : fallback;
 }
 
+/**
+ * `document.startViewTransition` no esta en la libreria estandar de TypeScript
+ * todavia, y no es razon para apagar el efecto en los navegadores que si lo
+ * traen. Se declara lo minimo que se usa.
+ */
+interface ViewTransition {
+  ready: Promise<void>;
+}
+type WithViewTransitions = Document & {
+  startViewTransition?: (callback: () => void) => ViewTransition;
+};
+
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => readTheme());
   const isDark = theme === "dark";
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     try {
@@ -64,9 +79,61 @@ export function useTheme() {
       ?.setAttribute("content", PAGE_BG[theme]);
   }, [theme]);
 
+  /**
+   * Cambia el tema revelandolo en un circulo que nace del propio boton.
+   *
+   * El radio es la distancia del boton a la esquina mas lejana de la ventana,
+   * asi que el circulo termina de cubrirla justo al completar la animacion, sin
+   * pasarse ni quedarse corto. Las reglas que hacen falta para que el tema
+   * nuevo se recorte por encima del viejo estan en `index.css`.
+   *
+   * Todo esto es adorno: sin soporte de la API, o con movimiento reducido, o si
+   * el evento no trae boton (teclado, llamada programatica), el tema cambia de
+   * golpe y no pasa nada.
+   */
   const toggleTheme = useCallback(
-    () => setTheme((actual) => (actual === "dark" ? "light" : "dark")),
-    [],
+    (event?: MouseEvent<HTMLElement>) => {
+      const apply = () =>
+        setTheme((actual) => (actual === "dark" ? "light" : "dark"));
+
+      const doc = document as WithViewTransitions;
+      const button = event?.currentTarget;
+      if (!doc.startViewTransition || prefersReducedMotion || !button) {
+        apply();
+        return;
+      }
+
+      const box = button.getBoundingClientRect();
+      const x = box.left + box.width / 2;
+      const y = box.top + box.height / 2;
+      const radius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      );
+
+      const transition = doc.startViewTransition(apply);
+      void transition.ready
+        .then(() => {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${radius}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: 650,
+              easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+              pseudoElement: "::view-transition-new(root)",
+            },
+          );
+        })
+        .catch(() => {
+          // La transicion puede abortarse (otra en curso, pestana oculta). El
+          // tema ya se aplico dentro del callback, asi que no hay nada que hacer.
+        });
+    },
+    [prefersReducedMotion],
   );
 
   return { theme, isDark, toggleTheme };

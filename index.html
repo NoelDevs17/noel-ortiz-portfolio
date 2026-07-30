@@ -83,6 +83,69 @@
       content="Noel Ortiz, Tech Lead y Full Stack Developer. Angular, .NET y arquitecturas limpias."
     />
 
+    <!--
+      Datos estructurados.
+
+      El sitio tiene que ser legible tambien por buscadores y agentes: el HTML
+      que produce React describe la apariencia, y esto describe los hechos. Los
+      proyectos aportan lo suyo aparte, con microdatos schema.org sobre cada
+      <article> (ver Projects.tsx).
+
+      Si cambian el correo, los perfiles o el puesto, hay que cambiarlos tambien
+      en src/data/portfolioData.ts: aqui van en crudo porque este archivo se
+      sirve antes de que exista el bundle.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Noel Ortiz",
+        "jobTitle": "Tech Lead & Full Stack Developer",
+        "email": "mailto:noelrum17@hotmail.com",
+        "url": "https://noel.aleftavsoft.com/",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Santo Domingo",
+          "addressCountry": "DO"
+        },
+        "sameAs": [
+          "https://github.com/NoelDevs17",
+          "https://linkedin.com/in/noelortizsanchez"
+        ],
+        "knowsAbout": [
+          "Angular",
+          "TypeScript",
+          "C#",
+          ".NET Core",
+          "NestJS",
+          "Clean Architecture",
+          "SOLID",
+          "SQL Server",
+          "Entity Framework",
+          "Azure DevOps",
+          "Scrum"
+        ],
+        "knowsLanguage": [
+          { "@type": "Language", "name": "Spanish" },
+          { "@type": "Language", "name": "English" }
+        ],
+        "worksFor": {
+          "@type": "GovernmentOrganization",
+          "name": "Ministerio de Administración Pública (MAP)"
+        },
+        "alumniOf": [
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "Universidad del Caribe (UNICARIBE)"
+          },
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "Instituto Tecnológico de las Américas (ITLA)"
+          }
+        ]
+      }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

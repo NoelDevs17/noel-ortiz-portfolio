@@ -1,6 +1,7 @@
 import { MotionConfig } from "framer-motion";
 import { LanguageProvider } from "./i18n/LanguageProvider";
 import { hasProjects } from "./data/portfolioData";
+import { useRevealSafety } from "./hooks/useRevealSafety";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -12,6 +13,13 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
+  /*
+    Si el documento no compone fotogramas, el revelado al scroll no llega a
+    dispararse y la pagina se quedaria en blanco. Esto lo detecta y pinta el
+    estado final. Va aqui arriba, antes que nada que pueda fallar.
+  */
+  useRevealSafety();
+
   return (
     /*
       `reducedMotion="user"` hace que framer-motion respete la preferencia del
@@ -33,14 +41,17 @@ function App() {
             <Skills />
             {/*
               La seccion de Proyectos solo existe cuando hay proyectos reales.
-              Al no publicarse, Experiencia ocupa su turno en la alternancia de
-              fondos y sube a la superficie elevada.
+
+              Ya no hace falta reajustar los fondos de las secciones vecinas
+              cuando falta: en el rediseno el ritmo lo marcan los filetes
+              divisorios, y solo Stack y Contacto se levantan a la superficie
+              elevada. Quitar Proyectos deja la alternancia intacta.
             */}
             {hasProjects && <Projects />}
-            <Experience elevated={!hasProjects} />
-            <Contact elevated={hasProjects} />
+            <Experience />
+            <Contact />
           </main>
-          <Footer elevated={!hasProjects} />
+          <Footer />
           <ScrollToTop />
         </div>
       </LanguageProvider>

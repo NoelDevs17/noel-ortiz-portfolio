@@ -1,26 +1,29 @@
 import { personalInfo } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
-import { FaHeart } from "react-icons/fa";
+import { CONTAINER } from "../lib/layout";
 
-interface FooterProps {
-  /** Ver la nota sobre alternancia de fondos en Experience.tsx. */
-  elevated?: boolean;
-}
-
-const Footer = ({ elevated = false }: FooterProps) => {
+/**
+ * Pie.
+ *
+ * Dos lineas en versalitas y nada mas. El "hecho con ♥" del portafolio anterior
+ * se ha ido: el rediseno cierra en seco, y a estas alturas de la pagina el
+ * corazon competia con la direccion de correo de la seccion anterior, que es lo
+ * ultimo en lo que se deberia reparar.
+ */
+const Footer = () => {
   const { t } = useI18n();
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className={`py-8 ${elevated ? "bg-secondary-bg" : "bg-primary-bg"} text-center`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-sm text-text-secondary font-mono">
-          {t.footer.builtWith}{" "}
-          <FaHeart className="inline text-accent" aria-hidden="true" />{" "}
-          {t.footer.by} {personalInfo.name}
+    <footer className="bg-primary-bg py-7">
+      <div
+        className={`${CONTAINER} flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between`}
+      >
+        <p className="text-[11px] uppercase tracking-[0.14em] text-muted">
+          © {year} {personalInfo.name}
         </p>
-        <p className="text-xs text-text-secondary font-mono mt-1">
-          © {currentYear} {personalInfo.name}. {t.footer.rights}
+        <p className="text-[11px] uppercase tracking-[0.14em] text-muted">
+          {t.footer.rights}
         </p>
       </div>
     </footer>

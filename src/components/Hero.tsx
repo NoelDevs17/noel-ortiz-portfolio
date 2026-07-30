@@ -1,180 +1,409 @@
-import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { FaGithub, FaLinkedin, FaChevronDown } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import type { MotionValue } from "framer-motion";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import Marquee from "./Marquee";
+import RevealLines from "./RevealLines";
 import { personalInfo } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
+import { CONTAINER } from "../lib/layout";
+import { EASE } from "../lib/motion";
+import { GHOST_BUTTON } from "../lib/styles";
+
+/**
+ * Parallax por capas atado al scroll.
+ *
+ * El multiplicador `k` es el que separa una capa de otra: el nombre sube mas
+ * rapido que el parrafo, los metadatos bajan. El desplazamiento se congela
+ * pasada vez y media la altura de la ventana —mas alla el Hero ya no se ve y
+ * seguir calculando solo mueve pixeles fuera de pantalla.
+ */
+const useParallax = (scrollY: MotionValue<number>, k: number, enabled: boolean) =>
+  useTransform(scrollY, (y) =>
+    enabled ? Math.min(y, window.innerHeight * 1.3) * k : 0,
+  );
+
+/**
+ * Cursor del terminal.
+ *
+ * El parpadeo es **irregular** a proposito: entre 380 y 640 ms encendido, entre
+ * 520 y 860 apagado. Un `animation: blink 1s infinite` se reconoce al instante
+ * como una animacion; esto se lee como alguien que esta escribiendo. Vive en su
+ * propio componente para que el temporizador no repinte el Hero entero.
+ */
+const Caret = () => {
+  const prefersReducedMotion = useReducedMotion();
+  const [on, setOn] = useState(true);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    let timer: number;
+    const blink = (visible: boolean) => {
+      timer = window.setTimeout(
+        () => {
+          setOn(!visible);
+          blink(!visible);
+        },
+        visible ? 380 + Math.random() * 260 : 520 + Math.random() * 340,
+      );
+    };
+    blink(true);
+    return () => window.clearTimeout(timer);
+  }, [prefersReducedMotion]);
+
+  return (
+    <span aria-hidden="true" className={`text-accent ${on ? "" : "opacity-0"}`}>
+      _
+    </span>
+  );
+};
 
 interface TypewriterProps {
   texts: string[];
-  speed?: number;
-  pause?: number;
 }
 
-// Typing effect component
-const Typewriter = ({ texts, speed = 150, pause = 1500 }: TypewriterProps) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
-  const [reverse, setReverse] = useState(false);
+/**
+ * Rotacion de titulares con efecto de escritura.
+ *
+ * 78 ms por caracter al escribir, 38 al borrar y 1800 de pausa al completar la
+ * frase. Se reinicia entero cuando cambia `texts`, que es lo que ocurre al
+ * cambiar de idioma: seguir borrando en espanol una frase que ya esta en ingles
+ * se ve mal.
+ *
+ * Con movimiento reducido no se programa ningun temporizador y se pinta el
+ * primer titular completo: el contenido no se pierde, solo deja de moverse.
+ */
+const Typewriter = ({ texts }: TypewriterProps) => {
+  const [{ index, sub, reverse }, setPhase] = useState({
+    index: 0,
+    sub: 0,
+    reverse: false,
+  });
   const prefersReducedMotion = useReducedMotion();
 
+  // Idioma nuevo: vuelta al principio.
   useEffect(() => {
-    // Con movimiento reducido no se programa ningun temporizador: el texto se
-    // pinta entero mas abajo. Un cursor parpadeando y letras apareciendo son
-    // justo el tipo de movimiento continuo que hay que evitar.
+    setPhase({ index: 0, sub: 0, reverse: false });
+  }, [texts]);
+
+  useEffect(() => {
     if (prefersReducedMotion) return;
 
-    // `noUncheckedIndexedAccess` obliga a comprobar el acceso por indice. La
-    // guarda sustituye al `if (index === texts.length) return` del original y
-    // cubre ademas el caso de una lista vacia.
-    const current = texts[index];
+    // `noUncheckedIndexedAccess` obliga a comprobarlo, y ademas cubre el caso
+    // de una lista vacia.
+    const current = texts[index % texts.length];
     if (current === undefined) return;
 
-    if (subIndex === current.length + 1 && !reverse) {
-      // Este temporizador no se limpiaba: al desmontar seguia vivo y disparaba
-      // setReverse sobre un componente que ya no existe.
-      const pauseTimeout = setTimeout(() => setReverse(true), pause);
-      return () => clearTimeout(pauseTimeout);
+    if (sub === current.length && !reverse) {
+      const pause = window.setTimeout(
+        () => setPhase((p) => ({ ...p, reverse: true })),
+        1800,
+      );
+      return () => window.clearTimeout(pause);
     }
 
-    if (subIndex === 0 && reverse) {
-      setReverse(false);
-      setIndex((prev) => (prev + 1) % texts.length);
+    if (sub === 0 && reverse) {
+      setPhase({ index: (index + 1) % texts.length, sub: 0, reverse: false });
       return;
     }
 
-    const timeout = setTimeout(
-      () => {
-        setSubIndex((prev) => prev + (reverse ? -1 : 1));
-        setDisplayedText(current.substring(0, subIndex));
-      },
-      reverse ? speed / 2 : speed,
+    const step = window.setTimeout(
+      () => setPhase((p) => ({ ...p, sub: p.sub + (p.reverse ? -1 : 1) })),
+      reverse ? 38 : 78,
     );
+    return () => window.clearTimeout(step);
+  }, [texts, index, sub, reverse, prefersReducedMotion]);
 
-    return () => clearTimeout(timeout);
-  }, [subIndex, index, reverse, texts, speed, pause, prefersReducedMotion]);
-
-  // Sin animacion: la primera frase, completa y sin cursor. El contenido no se
-  // pierde, solo deja de moverse.
-  if (prefersReducedMotion) {
-    return <span className="text-accent">{texts[0] ?? ""}</span>;
-  }
+  const first = texts[0] ?? "";
+  if (prefersReducedMotion) return <span>{first}</span>;
 
   return (
-    <span className="text-accent">
-      {displayedText}
-      <span className="animate-pulse">|</span>
+    <span>
+      {(texts[index % texts.length] ?? "").substring(0, sub)}
+      <Caret />
     </span>
   );
 };
 
 const Hero = () => {
   const { t, pick } = useI18n();
+  const prefersReducedMotion = useReducedMotion();
+  const motionOn = !prefersReducedMotion;
+
+  const { scrollY } = useScroll();
+
+  // Un multiplicador por capa. El signo decide si sube o baja con el scroll.
+  const yGreeting = useParallax(scrollY, -0.03, motionOn);
+  const yName = useParallax(scrollY, -0.14, motionOn);
+  const yTyped = useParallax(scrollY, -0.08, motionOn);
+  const yIntro = useParallax(scrollY, -0.05, motionOn);
+  const yActions = useParallax(scrollY, -0.04, motionOn);
+  const yMeta = useParallax(scrollY, 0.07, motionOn);
+  const yGlowScroll = useParallax(scrollY, 0.24, motionOn);
+  const yGridScroll = useParallax(scrollY, 0.08, motionOn);
+
+  /*
+    Reaccion al puntero. Los valores crudos van de -1 a 1 (posicion relativa al
+    centro de la ventana) y pasan por un muelle antes de tocar el DOM: pegado al
+    cursor se sentiria nervioso, y ese retraso es justo lo que lo hace parecer
+    peso y no seguimiento.
+  */
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const spring = { stiffness: 50, damping: 20, mass: 1 } as const;
+  const px = useSpring(pointerX, spring);
+  const py = useSpring(pointerY, spring);
+
+  const nameX = useTransform(px, (v) => (motionOn ? v * 9 : 0));
+  const nameRotate = useTransform(px, (v) => (motionOn ? v * 0.35 : 0));
+  const glowX = useTransform(px, (v) => (motionOn ? v * -46 : 0));
+  const glowY = useTransform([py, yGlowScroll], ([p, s]: number[]) =>
+    motionOn ? (p ?? 0) * -32 + (s ?? 0) : 0,
+  );
+  const gridX = useTransform(px, (v) => (motionOn ? v * 14 : 0));
+  const gridY = useTransform([py, yGridScroll], ([p, s]: number[]) =>
+    motionOn ? (p ?? 0) * 10 + (s ?? 0) : 0,
+  );
+
+  useEffect(() => {
+    if (!motionOn) return;
+    const onMove = (event: globalThis.PointerEvent) => {
+      pointerX.set((event.clientX / window.innerWidth - 0.5) * 2);
+      pointerY.set((event.clientY / window.innerHeight - 0.5) * 2);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [motionOn, pointerX, pointerY]);
+
+  /*
+    Iman del CTA: el boton se acerca al cursor mientras esta encima y vuelve a
+    su sitio al salir. Dos transiciones distintas a proposito —casi instantanea
+    al seguir, larga y frenada al volver—, que es lo que da la sensacion de
+    goma. Se anima el MotionValue directamente para no repintar en cada pixel.
+  */
+  const magnetX = useMotionValue(0);
+  const magnetY = useMotionValue(0);
+  const magnetRef = useRef<HTMLAnchorElement>(null);
+
+  const onMagnetMove = (event: ReactPointerEvent<HTMLAnchorElement>) => {
+    if (!motionOn) return;
+    const box = magnetRef.current?.getBoundingClientRect();
+    if (!box) return;
+    const follow = { duration: 0.12, ease: "linear" } as const;
+    animate(magnetX, (event.clientX - (box.left + box.width / 2)) * 0.28, follow);
+    animate(magnetY, (event.clientY - (box.top + box.height / 2)) * 0.34, follow);
+  };
+
+  const onMagnetLeave = () => {
+    if (!motionOn) return;
+    const back = { duration: 0.5, ease: EASE } as const;
+    animate(magnetX, 0, back);
+    animate(magnetY, 0, back);
+  };
+
+  const intro = pick(personalInfo.summary)[0] ?? "";
 
   return (
     <section
       id="hero"
-      className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-primary-bg"
+      className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-primary-bg pt-[140px]"
     >
-      {/* Animated Background Blobs */}
+      {/* Resplandor: deriva propia de 18s, mas parallax, mas puntero. */}
       <motion.div
-        animate={{ x: [0, 100, 0], y: [0, -50, 0], scale: [1, 1.2, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-20 left-20 w-72 h-72 bg-accent/20 rounded-full blur-[100px]"
-      />
+        aria-hidden="true"
+        style={{ x: glowX, y: glowY }}
+        className="pointer-events-none absolute -top-[120px] -right-20 h-[520px] w-[520px]"
+      >
+        <div className="h-full w-full animate-drift rounded-full bg-accent/[0.16] blur-[130px]" />
+      </motion.div>
+
+      {/* Rejilla enmascarada. El degradado vive en .hero-grid (index.css). */}
       <motion.div
-        animate={{ x: [0, -100, 0], y: [0, 50, 0], scale: [1, 1.5, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-[120px]"
+        aria-hidden="true"
+        style={{ x: gridX, y: gridY }}
+        className="hero-grid pointer-events-none absolute inset-x-0 -top-[60px] bottom-0 opacity-50"
       />
 
-      <div className="container mx-auto px-6 relative z-10 text-center">
-        {/* Greeting */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-accent font-mono mb-4 text-lg sm:text-xl tracking-wide"
-        >
-          {t.hero.greeting}
-        </motion.p>
+      <div className={`${CONTAINER} relative z-[2]`}>
+        <div className="grid grid-cols-1 items-end gap-16 lg:grid-cols-[1fr_300px]">
+          <div>
+            {/* Saludo: la linea se dibuja, no aparece. */}
+            <motion.div
+              style={{ y: yGreeting }}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+              className="mb-9 flex items-center gap-4"
+            >
+              <motion.span
+                aria-hidden="true"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.1, delay: 0.15, ease: EASE }}
+                style={{ transformOrigin: "left" }}
+                className="block h-px w-14 bg-accent"
+              />
+              <span className="text-xs uppercase tracking-[0.24em] text-text-secondary">
+                {t.hero.greeting}
+              </span>
+            </motion.div>
 
-        {/* Name with Gradient */}
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, type: "spring" }}
-          className="text-5xl sm:text-7xl md:text-8xl font-bold mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-text-primary via-peak to-text-secondary"
-        >
-          {personalInfo.name}.
-        </motion.h1>
+            {/*
+              El nombre en dos lineas. Cada una sube desde su propio recorte, y
+              el punto final va en acento: es el unico signo de puntuacion del
+              titular y hace de firma.
+            */}
+            <motion.h1
+              style={{ y: yName, x: nameX, rotate: nameRotate }}
+              className="text-[clamp(56px,8.6vw,128px)] font-bold leading-[0.9] tracking-[-0.055em] text-text-primary [transform-origin:left_center]"
+            >
+              <span className="block overflow-hidden pb-[0.02em]">
+                <motion.span
+                  className="block"
+                  initial={{ y: "115%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.15, ease: EASE }}
+                >
+                  Noel
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden pb-[0.02em]">
+                <motion.span
+                  className="block"
+                  initial={{ y: "115%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.28, ease: EASE }}
+                >
+                  Ortiz<span className="text-accent">.</span>
+                </motion.span>
+              </span>
+            </motion.h1>
 
-        {/* Dynamic Role / Typewriter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="h-20 sm:h-24 md:h-28" // Fixed height to prevent layout shift
-        >
+            {/*
+              Linea de terminal. El alto es fijo para que la rotacion de
+              titulares no empuje el parrafo de abajo en cada letra.
+            */}
+            <motion.div
+              style={{ y: yTyped }}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+              className="mt-8 flex h-[34px] items-baseline gap-3.5"
+            >
+              <span
+                aria-hidden="true"
+                className="text-[13px] tracking-[0.1em] text-muted"
+              >
+                ~$
+              </span>
+              <h2 className="text-[clamp(18px,2.2vw,26px)] font-medium text-text-secondary">
+                <Typewriter texts={pick(personalInfo.titles)} />
+              </h2>
+            </motion.div>
+
+            {/* Solo la entradilla; el resto del resumen vive en Sobre mi. */}
+            <motion.div style={{ y: yIntro }}>
+              <RevealLines
+                text={intro}
+                delay={0.6}
+                className="mt-10 max-w-[640px] text-base font-light leading-[1.75] text-text-secondary [text-wrap:pretty]"
+              />
+            </motion.div>
+
+            <motion.div
+              style={{ y: yActions }}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
+              className="mt-11 flex items-center gap-7"
+            >
+              <motion.a
+                ref={magnetRef}
+                href="#contact"
+                onPointerMove={onMagnetMove}
+                onPointerLeave={onMagnetLeave}
+                style={{ x: magnetX, y: magnetY }}
+                className={`${GHOST_BUTTON} rounded-sm border border-accent px-[26px] py-3.5 text-xs font-bold uppercase tracking-[0.14em] text-accent`}
+              >
+                {t.hero.cta}
+              </motion.a>
+              <div className="flex items-center gap-5">
+                <a
+                  href={personalInfo.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`GitHub de ${personalInfo.name}`}
+                  className="inline-block text-text-secondary transition-all duration-[350ms] ease-editorial hover:-translate-y-[3px] hover:text-accent"
+                >
+                  <FaGithub size={20} />
+                </a>
+                <a
+                  href={personalInfo.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`LinkedIn de ${personalInfo.name}`}
+                  className="inline-block text-text-secondary transition-all duration-[350ms] ease-editorial hover:-translate-y-[3px] hover:text-accent"
+                >
+                  <FaLinkedin size={20} />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+
           {/*
-            Sin el "I " que traia la plantilla: los titulares de Noel son
-            sintagmas nominales ("Líder Técnico"), no verbales, y "I Líder
-            Técnico" no es una frase.
+            Metadatos. Es un <dl> de verdad y no tres parejas de <p>: son pares
+            termino-definicion, y asi un lector de pantalla los anuncia como
+            tales en vez de leer seis lineas sueltas.
           */}
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-text-secondary mb-8">
-            <Typewriter texts={pick(personalInfo.titles)} />
-          </h2>
-        </motion.div>
-
-        {/* Bio */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="max-w-4xl mx-auto text-text-secondary text-base sm:text-lg mb-10 leading-relaxed"
-        >
-          {/* Solo la entradilla; el resto del resumen vive en Sobre mi. */}
-          {pick(personalInfo.summary)[0]}
-        </motion.p>
-
-        {/* Icons Only (Button Removed) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex items-center justify-center gap-8"
-        >
-          <a
-            href={personalInfo.github}
-            target="_blank"
-            rel="noreferrer"
-            // Enlace solo con icono: sin nombre accesible, un lector de
-            // pantalla anuncia "enlace" y nada mas.
-            aria-label={`GitHub de ${personalInfo.name}`}
-            className="text-text-secondary hover:text-text-primary transition-colors transform hover:scale-110"
+          <motion.dl
+            style={{ y: yMeta }}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8, ease: EASE }}
+            className="flex flex-col gap-[22px] border-l border-line2 pl-6"
           >
-            <FaGithub size={32} />
-          </a>
-          <a
-            href={personalInfo.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`LinkedIn de ${personalInfo.name}`}
-            className="text-text-secondary hover:text-accent transition-colors transform hover:scale-110"
-          >
-            <FaLinkedin size={32} />
-          </a>
-        </motion.div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.2em] text-muted">
+                {t.hero.metaBase}
+              </dt>
+              <dd className="mt-1.5 text-sm text-text-primary">
+                {personalInfo.location}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.2em] text-muted">
+                {t.hero.metaFocus}
+              </dt>
+              <dd className="mt-1.5 text-sm text-text-primary">
+                {t.hero.metaFocusValue}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.2em] text-muted">
+                {t.hero.metaStatus}
+              </dt>
+              <dd className="mt-1.5 flex items-center gap-[9px] text-sm text-text-primary">
+                <span
+                  aria-hidden="true"
+                  className="block h-[7px] w-[7px] animate-dot-pulse rounded-full bg-accent"
+                />
+                {t.hero.metaStatusValue}
+              </dd>
+            </div>
+          </motion.dl>
+        </div>
       </div>
 
-      {/* Scroll Down Indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-text-secondary/50"
-      >
-        <FaChevronDown size={24} />
-      </motion.div>
+      <Marquee />
     </section>
   );
 };
