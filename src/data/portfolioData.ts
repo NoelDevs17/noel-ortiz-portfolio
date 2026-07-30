@@ -23,8 +23,6 @@ import type {
   Localized,
   PersonalInfo,
   Project,
-  ProjectCategory,
-  ProjectStatus,
   SkillGroup,
 } from "../types";
 
@@ -253,15 +251,20 @@ export const languages: Localized<LanguageProficiency[]> = {
 /**
  * Proyectos.
  *
- * Vacio a proposito: la seccion no se publica hasta que haya contenido real.
- * En cuanto se anada aqui una entrada con titulo de verdad, la seccion y su
- * enlace en la navegacion vuelven solos, sin tocar ningun componente.
+ * ⚠️ CONTENIDO DE EJEMPLO. Las descripciones de las tres entradas son
+ * plantillas que indican QUE escribir —contexto, tu aporte, resultado
+ * medible—, no texto final. Las sustituye Noel. Lo mismo con las capturas y
+ * con las URLs que faltan.
  *
- * `Projects.tsx` ya implementa la tarjeta completa del rediseno, incluidos los
- * estados pendientes: un proyecto sin `githubLink` o sin `liveLink` pinta el
- * boton con borde punteado en vez de esconderlo, y sin `image` cae en el
- * marcador de posicion. Es decir, se puede anadir una entrada aqui sin tener
- * todavia captura ni URLs, y la tarjeta lo declara en lugar de mentir.
+ * Estan aqui, y no en un array vacio, para que la seccion se vea y se pueda
+ * revisar el diseno con contenido de verdad delante. En cuanto haya textos
+ * definitivos, se reescriben estas mismas entradas y no hay que tocar ningun
+ * componente.
+ *
+ * La tarjeta ya soporta los estados pendientes, asi que una entrada incompleta
+ * no rompe nada: sin `githubLink` o sin `liveLink` el boton sale punteado e
+ * inactivo en vez de esconderse, y sin `image` cae en el marcador de posicion
+ * 16:10. Los dos primeros proyectos ejercen ese caso; el tercero, el contrario.
  *
  * Forma de una entrada:
  *
@@ -272,34 +275,85 @@ export const languages: Localized<LanguageProficiency[]> = {
  *     status: "production",             // production | in-progress | archived
  *     category: "gubernamental",        // gubernamental | producto | freelance
  *     tech: ["Angular", ".NET 8"],
- *     description: { es: [...], en: [...] },   // 3-4 vinetas: contexto,
- *                                              // tu aporte, resultado medible
+ *     description: { es: [...], en: [...] },   // 3-4 vinetas
  *     githubLink: "https://…",          // opcional
  *     liveLink: "https://…",            // opcional
  *     image: "/projects/sistema-map.png",      // 16:10, o null
  *   }
  */
-export const projects: Project[] = [];
-
-/**
- * Etiquetas de `status` y `category`.
- *
- * Viven aqui y no en `i18n/translations.ts` porque su clave es el propio tipo
- * del modelo: `Record<ProjectStatus, …>` obliga a que anadir un estado nuevo
- * al tipo sea un error de compilacion hasta que se le escriba su rotulo en los
- * dos idiomas. Desde translations.ts esa garantia se perderia.
- */
-export const PROJECT_STATUS: Record<ProjectStatus, Localized> = {
-  production: { es: "En producción", en: "In production" },
-  "in-progress": { es: "En curso", en: "In progress" },
-  archived: { es: "Archivado", en: "Archived" },
-};
-
-export const PROJECT_CATEGORY: Record<ProjectCategory, Localized> = {
-  gubernamental: { es: "Gubernamental", en: "Government" },
-  producto: { es: "Producto", en: "Product" },
-  freelance: { es: "Freelance", en: "Freelance" },
-};
+export const projects: Project[] = [
+  {
+    slug: "sistema-map",
+    title: "Sistema institucional — MAP",
+    duration: "2025 —",
+    status: "production",
+    category: "gubernamental",
+    tech: [
+      "Angular",
+      ".NET 8",
+      "SQL Server",
+      "Clean Architecture",
+      "Azure DevOps",
+    ],
+    description: {
+      es: [
+        "Escribe aquí de qué trata el proyecto: el problema institucional que resuelve y a quién sirve.",
+        "Tu papel y las decisiones de arquitectura que tomaste (monolito modular, capas, patrones).",
+        "El resultado medible: tiempos, volumen de trámites, cobertura de pruebas, despliegues por semana.",
+      ],
+      en: [
+        "Write what the project is about: the institutional problem it solves and who it serves.",
+        "Your role and the architecture decisions you made (modular monolith, layers, patterns).",
+        "The measurable outcome: cycle times, volume, test coverage, deploys per week.",
+      ],
+    },
+    image: null,
+  },
+  {
+    slug: "plataforma-mepyd",
+    title: "Plataforma de gestión — MEPYD",
+    duration: "2022 — 2025",
+    status: "production",
+    category: "gubernamental",
+    tech: ["Angular", ".NET Core", "Entity Framework", "TailwindCSS", "Scrum"],
+    description: {
+      es: [
+        "Describe el alcance funcional en una frase: módulos, usuarios internos, integraciones.",
+        "Cuenta el trabajo de análisis y levantamiento de requerimientos junto a las áreas.",
+        "Cierra con lo que dejaste instalado: estándares de código, documentación, CI/CD.",
+      ],
+      en: [
+        "Describe the functional scope in one line: modules, internal users, integrations.",
+        "Explain the requirements analysis work done alongside the business areas.",
+        "Close with what you left behind: coding standards, documentation, CI/CD.",
+      ],
+    },
+    image: null,
+  },
+  {
+    slug: "nuevo-proyecto",
+    title: "Nuevo proyecto",
+    duration: "2026",
+    status: "in-progress",
+    category: "producto",
+    tech: ["NestJs", "TypeScript", "PostgreSQL"],
+    description: {
+      es: [
+        "Duplica esta entrada para cada proyecto nuevo: título, fechas, estado y categoría a la izquierda.",
+        "Tres o cuatro líneas máximo por proyecto — contexto, tu aporte, resultado.",
+        "Añade la captura en public/projects/ y los enlaces de repositorio o demo.",
+      ],
+      en: [
+        "Duplicate this entry for every new project: title, dates, status and category on the left.",
+        "Three or four lines max per project — context, your contribution, outcome.",
+        "Add the screenshot in public/projects/ and the repository or demo links.",
+      ],
+    },
+    githubLink: "https://github.com/NoelDevs17",
+    liveLink: "https://noel.aleftavsoft.com/",
+    image: null,
+  },
+];
 
 /** Un proyecto es un marcador mientras su titulo empiece por "TODO". */
 const esMarcador = (proyecto: Project) =>
