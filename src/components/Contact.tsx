@@ -1,45 +1,111 @@
+import { motion } from "framer-motion";
+import SectionHeading from "./SectionHeading";
 import { personalInfo } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
-import { motion } from "framer-motion";
+import { CONTAINER } from "../lib/layout";
+import { rise } from "../lib/motion";
 
-interface ContactProps {
-  /** Ver la nota sobre alternancia de fondos en Experience.tsx. */
-  elevated?: boolean;
-}
-
-const Contact = ({ elevated = true }: ContactProps) => {
+/**
+ * Contacto.
+ *
+ * El email **es** el titular. No hay boton de "escríbeme" ni formulario: la
+ * accion es la direccion, escrita al tamano de un titulo, con un subrayado de
+ * acento que se dibuja de izquierda a derecha al pasar el cursor.
+ */
+const Contact = () => {
   const { t } = useI18n();
+
+  const arrowLink =
+    "group flex items-center justify-between border-b border-line2 py-2 text-[13px] text-text-secondary transition-colors hover:text-text-primary";
 
   return (
     <section
       id="contact"
-      className={`py-32 ${elevated ? "bg-secondary-bg" : "bg-primary-bg"} flex items-center justify-center text-center relative overflow-hidden`}
+      aria-labelledby="contact-title"
+      className="relative overflow-hidden bg-secondary-bg pb-24 pt-24 sm:pb-[120px] sm:pt-40"
     >
-      {/* Glowing circle behind */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none"></div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-[200px] left-1/2 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-accent/10 blur-[150px]"
+      />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="container mx-auto px-6 max-w-2xl relative z-10"
-      >
-        <p className="text-accent font-mono mb-4 text-lg">{t.contact.kicker}</p>
-        <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">
-          {t.contact.title}
-        </h2>
-        <p className="text-text-secondary text-lg mb-10 leading-relaxed">
-          {t.contact.body}
-        </p>
+      <div className={`${CONTAINER} relative z-[2]`}>
+        <SectionHeading
+          section="contact"
+          title={t.contact.title}
+          id="contact-title"
+          className="mb-16"
+        />
 
-        <a
-          href={`mailto:${personalInfo.email}`}
-          className="inline-block px-10 py-4 border-2 border-accent text-accent font-bold rounded-md hover:bg-accent/10 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-accent/20"
-        >
-          {t.contact.cta}
-        </a>
-      </motion.div>
+        <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-[1fr_300px] lg:gap-20">
+          <div>
+            <motion.p
+              {...rise()}
+              className="mb-7 max-w-[620px] text-lg font-light leading-[1.75] text-text-secondary [text-wrap:pretty]"
+            >
+              {t.contact.body}
+            </motion.p>
+            <motion.a
+              {...rise(1)}
+              href={`mailto:${personalInfo.email}`}
+              className="group relative inline-block break-all text-[clamp(26px,4vw,54px)] font-bold tracking-[-0.045em] text-text-primary"
+            >
+              {personalInfo.email}
+              <span
+                aria-hidden="true"
+                className="absolute bottom-[0.08em] left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-500 ease-editorial group-hover:scale-x-100"
+              />
+            </motion.a>
+          </div>
+
+          <motion.div
+            {...rise(2)}
+            className="flex flex-col gap-4 border-l border-line2 pl-6"
+          >
+            <a
+              href={personalInfo.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className={arrowLink}
+            >
+              LinkedIn
+              <span
+                aria-hidden="true"
+                className="inline-block text-accent transition-transform duration-[350ms] ease-editorial group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              >
+                ↗
+              </span>
+            </a>
+            <a
+              href={personalInfo.github}
+              target="_blank"
+              rel="noreferrer"
+              className={arrowLink}
+            >
+              GitHub
+              <span
+                aria-hidden="true"
+                className="inline-block text-accent transition-transform duration-[350ms] ease-editorial group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              >
+                ↗
+              </span>
+            </a>
+            <a
+              href={personalInfo.resumeLink}
+              download
+              target="_blank"
+              rel="noopener"
+              aria-label={`${t.contact.cvLabel} — ${t.nav.resumeAria}`}
+              className={arrowLink}
+            >
+              {t.contact.cvLabel}
+              <span aria-hidden="true" className="text-accent">
+                ↓
+              </span>
+            </a>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 };

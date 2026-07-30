@@ -1,132 +1,150 @@
-import SectionTitle from "./SectionTitle";
+import { motion } from "framer-motion";
+import SectionHeading from "./SectionHeading";
+import RevealLines from "./RevealLines";
 import {
-  certifications,
   education,
   languages,
   personalInfo,
+  stats,
 } from "../data/portfolioData";
+import { useCountUp } from "../hooks/useCountUp";
 import { useI18n } from "../i18n/context";
-import { motion } from "framer-motion";
-import { FaGraduationCap } from "react-icons/fa";
+import { parseRange } from "../lib/duration";
+import { CONTAINER, SECTION_PADDING } from "../lib/layout";
+import { rise } from "../lib/motion";
+import type { Stat } from "../data/portfolioData";
+
+interface StatCellProps {
+  stat: Stat;
+  index: number;
+}
+
+const StatCell = ({ stat, index }: StatCellProps) => {
+  const { pick } = useI18n();
+  const { ref, text } = useCountUp(stat.value);
+
+  return (
+    <motion.div {...rise(index)} className="bg-primary-bg px-6 py-[26px]">
+      <p
+        ref={ref}
+        className="text-[38px] font-bold tracking-[-0.04em] text-text-primary [font-variant-numeric:tabular-nums]"
+      >
+        {text}
+      </p>
+      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-muted">
+        {pick(stat.label)}
+      </p>
+    </motion.div>
+  );
+};
 
 const About = () => {
   const { t, pick } = useI18n();
-  // El primer parrafo del resumen ya se muestra en el Hero: aqui va el resto.
-  const parrafos = pick(personalInfo.summary).slice(1);
+  // La entradilla ya la muestra el Hero: aqui empieza el resto del resumen.
+  const paragraphs = pick(personalInfo.summary).slice(1);
 
   return (
-    <section id="about" className="py-24 bg-secondary-bg">
-      <div className="container mx-auto px-6 lg:px-20">
-        <SectionTitle id="about-title">{t.about.title}</SectionTitle>
+    <section
+      id="about"
+      aria-labelledby="about-title"
+      className={`border-b border-line2 bg-primary-bg ${SECTION_PADDING}`}
+    >
+      <div className={CONTAINER}>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[300px_1fr] lg:gap-20">
+          {/*
+            Columna fija. Se queda a la altura de los ojos mientras el resumen
+            pasa por delante: el titulo de la seccion nunca se pierde de vista,
+            que es lo que sostiene una lectura larga.
+          */}
+          <div>
+            <div className="lg:sticky lg:top-[120px]">
+              <SectionHeading
+                section="about"
+                title={t.about.title}
+                id="about-title"
+              />
+              <motion.p
+                {...rise()}
+                className="mt-[22px] text-sm font-light leading-[1.7] text-text-secondary"
+              >
+                {pick(personalInfo.specialty)}
+              </motion.p>
+            </div>
+          </div>
 
-        <motion.div
-          className="max-w-3xl mx-auto text-left mb-16 space-y-5"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="text-lg md:text-xl text-text-secondary leading-relaxed font-light">
-            <span className="text-accent font-mono text-2xl mr-2">{t.about.greeting}</span>
-            {pick(personalInfo.specialty)}
-          </p>
-          {parrafos.map((parrafo, index) => (
-            <p
-              key={index}
-              className="text-base md:text-lg text-text-secondary leading-relaxed font-light"
-            >
-              {parrafo}
-            </p>
-          ))}
-        </motion.div>
+          <div>
+            {paragraphs.map((paragraph) => (
+              <RevealLines
+                key={paragraph}
+                text={paragraph}
+                className="mb-[26px] text-[17px] font-light leading-[1.8] text-text-secondary [text-wrap:pretty]"
+              />
+            ))}
 
-        <h3 className="text-2xl font-bold text-accent mb-10 font-mono flex items-center">
-          <span className="mr-4 text-3xl">/</span> {t.about.education}
-        </h3>
+            {/*
+              Rejilla de cifras. Los filetes que separan las celdas son el
+              propio `gap` de 1px sobre un fondo de color: asi los divisores
+              caen exactamente donde toca sin un solo borde declarado, y no se
+              duplican en los cruces.
+            */}
+            <div className="mt-14 grid grid-cols-1 gap-px border border-line2 bg-line2 sm:grid-cols-3">
+              {stats.map((stat, index) => (
+                <StatCell key={stat.value + index} stat={stat} index={index} />
+              ))}
+            </div>
 
-        {/* Minimal "Tech List" style */}
-        <div className="space-y-4">
-          {education.map((edu, index) => (
-            <motion.div
-              key={index}
-              className="group relative bg-primary-bg p-6 rounded-md border-l-2 border-transparent hover:border-accent transition-all duration-300 hover:bg-elevate/5"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex flex-col md:flex-row justify-between md:items-center">
-                <div className="flex items-start">
-                  <FaGraduationCap className="text-text-secondary/70 text-2xl mt-1 mr-4 group-hover:text-accent transition-colors" />
-                  <div>
-                    <h4 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors">
-                      {edu.institution}
-                    </h4>
-                    <p className="text-text-secondary font-medium mt-1">
-                      {pick(edu.degree)}
+            <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2">
+              <motion.div {...rise()}>
+                <h3 className="mb-[18px] text-[11px] uppercase tracking-[0.2em] text-muted">
+                  {t.about.education}
+                </h3>
+                {education.map((entry) => {
+                  const range = parseRange(entry.duration, t.experience.present);
+                  return (
+                    <div
+                      key={entry.institution}
+                      className="border-t border-line2 py-3.5"
+                    >
+                      <p className="text-[15px] font-medium text-text-primary">
+                        {pick(entry.degree)}
+                      </p>
+                      <p className="mt-[5px] text-[13px] text-text-secondary">
+                        {entry.institution}
+                      </p>
+                      {/*
+                        Un rango abierto ya dice "en curso": repetir el estado
+                        detras seria decir dos veces lo mismo.
+                      */}
+                      <p className="mt-[5px] text-xs text-muted">
+                        {range.ongoing
+                          ? range.text
+                          : `${range.text} · ${pick(entry.status)}`}
+                      </p>
+                    </div>
+                  );
+                })}
+              </motion.div>
+
+              <motion.div {...rise(1)}>
+                <h3 className="mb-[18px] text-[11px] uppercase tracking-[0.2em] text-muted">
+                  {t.about.languages}
+                </h3>
+                {pick(languages).map((language) => (
+                  <div
+                    key={language.name}
+                    className="border-t border-line2 py-3.5"
+                  >
+                    <p className="text-[15px] font-medium text-text-primary">
+                      {language.name}
+                    </p>
+                    <p className="mt-[5px] text-[13px] text-text-secondary">
+                      {language.level}
                     </p>
                   </div>
-                </div>
-
-                <div className="mt-4 md:mt-0 text-left md:text-right">
-                  <p className="font-mono text-sm text-accent bg-accent/10 inline-block px-3 py-1 rounded-md mb-2">
-                    {edu.duration}
-                  </p>
-                  <p className="text-sm text-text-secondary font-mono block">
-                    {pick(edu.status)}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <h3 className="text-2xl font-bold text-accent mt-16 mb-10 font-mono flex items-center">
-          <span className="mr-4 text-3xl">/</span> {t.about.certifications}
-        </h3>
-
-        {/*
-          Once entradas: lista compacta en vez de tarjetas, que a este volumen
-          convertirian la seccion en un muro.
-        */}
-        <ul className="space-y-2">
-          {certifications.map((cert, index) => (
-            <motion.li
-              key={index}
-              className="group flex flex-col gap-1 border-l-2 border-hairline pl-5 py-2 transition-colors duration-300 hover:border-accent sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-              initial={{ opacity: 0, x: -12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: Math.min(index, 6) * 0.05, duration: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-text-primary text-base leading-snug group-hover:text-accent transition-colors">
-                {cert.title}
-                {cert.institution && (
-                  <span className="text-text-secondary"> · {cert.institution}</span>
-                )}
-              </span>
-              <span className="font-mono text-sm text-text-secondary whitespace-nowrap">
-                {cert.duration}
-                {cert.status && ` · ${pick(cert.status)}`}
-              </span>
-            </motion.li>
-          ))}
-        </ul>
-
-        <h3 className="text-2xl font-bold text-accent mt-16 mb-10 font-mono flex items-center">
-          <span className="mr-4 text-3xl">/</span> {t.about.languages}
-        </h3>
-
-        <div className="flex flex-wrap gap-4">
-          {pick(languages).map((idioma, index) => (
-            <div
-              key={index}
-              className="bg-primary-bg border border-hairline rounded-md px-6 py-4"
-            >
-              <p className="text-text-primary font-bold">{idioma.name}</p>
-              <p className="text-sm text-text-secondary mt-1">{idioma.level}</p>
+                ))}
+              </motion.div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

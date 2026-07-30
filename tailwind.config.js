@@ -59,6 +59,20 @@ export default {
          * negro en claro.
          */
         peak: "rgb(var(--peak) / <alpha-value>)",
+
+        // --- Filetes del rediseno editorial --------------------------------
+        /**
+         * Tres pesos del mismo trazo. Ver la nota extensa en `src/index.css`:
+         * el canal se invierte con el tema y la opacidad la aporta una
+         * variable, no un literal, porque sobre papel hace falta un punto mas.
+         *
+         * Ninguno acepta modificador `/N`: el alfa ya esta puesto y un
+         * `border-line/50` no compilaria. Para bordes con opacidad propia sigue
+         * estando `hairline`.
+         */
+        line: "rgb(var(--hairline) / var(--line-alpha))",
+        line2: "rgb(var(--hairline) / var(--line2-alpha))",
+        veil: "rgb(var(--elevate) / var(--veil-alpha))",
       },
       /**
        * Resplandores de acento. Estaban escritos como rgba fijos dentro de
@@ -134,11 +148,37 @@ export default {
           "monospace",
         ],
       },
+      /**
+       * Curva unica del rediseno. Sale disparada y frena largo: es lo que hace
+       * que un desplazamiento parezca decidido y no elastico. Se usa en TODA
+       * transicion y animacion del sitio, tanto aqui como en los `ease` que
+       * recibe framer-motion (alli va como la tupla [0.16, 1, 0.3, 1]).
+       */
+      transitionTimingFunction: {
+        editorial: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
       animation: {
         "text-focus-in":
           "text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both",
         "slide-in-bottom":
           "slide-in-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both",
+
+        /**
+         * Marquesina. La lista de tecnologias se pinta DUPLICADA y la pista se
+         * desplaza exactamente la mitad de su ancho: al terminar, la segunda
+         * copia esta donde arrancó la primera y el salto es invisible.
+         *
+         * Es animacion CSS y no framer-motion a proposito: el Marquee ajusta su
+         * `playbackRate` desde el scroll, y eso exige una WAAPI de verdad
+         * (`element.getAnimations()`), que es lo que produce una @keyframes.
+         */
+        marquee: "marquee 42s linear infinite",
+
+        /** Deriva propia del resplandor del Hero, bajo el parallax. */
+        drift: "drift 18s ease-in-out infinite",
+
+        /** Punto de "abierto a oportunidades": un pulso que se expande y muere. */
+        "dot-pulse": "dot-pulse 2.4s ease-out infinite",
       },
       keyframes: {
         "text-focus-in": {
@@ -148,6 +188,18 @@ export default {
         "slide-in-bottom": {
           "0%": { transform: "translateY(50px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(60px, -40px) scale(1.15)" },
+        },
+        "dot-pulse": {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgb(var(--accent) / 0.55)" },
+          "50%": { boxShadow: "0 0 0 6px rgb(var(--accent) / 0)" },
         },
       },
     },

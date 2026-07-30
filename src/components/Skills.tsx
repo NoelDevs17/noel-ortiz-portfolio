@@ -1,83 +1,77 @@
-import SectionTitle from "./SectionTitle";
+import { motion } from "framer-motion";
+import SectionHeading from "./SectionHeading";
 import { skillGroups } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
-import { motion } from "framer-motion";
-import type { Skill } from "../types";
+import { CONTAINER, SECTION_PADDING } from "../lib/layout";
+import { rise } from "../lib/motion";
 
-interface SkillCategoryProps {
-  title: string;
-  items: Skill[];
-  delayOffset: number;
-}
-
-const SkillCategory = ({ title, items, delayOffset }: SkillCategoryProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay: delayOffset, duration: 0.5 }}
-    className="w-full"
-  >
-    {/* Category Title */}
-    <h3 className="text-2xl md:text-3xl font-semibold text-accent mb-8 flex items-center gap-4">
-      <span className="h-[2px] w-12 bg-accent/50 inline-block"></span>
-      {title}
-    </h3>
-
-    {/* Skills Container - Flex Wrap for row layout */}
-    <div className="flex flex-wrap gap-5">
-      {items.map((skill, index) => {
-        // El modelo guarda la referencia al componente, no un elemento ya
-        // construido, asi que se instancia aqui.
-        const Icon = skill.icon;
-        return (
-          <motion.div
-            key={index}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="flex items-center gap-4 bg-secondary-bg px-6 py-4 rounded-md border border-hairline hover:border-accent/50 hover:shadow-accent-glow transition-all duration-300 cursor-default"
-          >
-            <span className="text-3xl text-accent">
-              <Icon />
-            </span>
-            <span className="text-text-primary text-lg font-medium">
-              {skill.name}
-            </span>
-          </motion.div>
-        );
-      })}
-    </div>
-  </motion.div>
-);
-
+/**
+ * Stack.
+ *
+ * Cada categoria es una **fila de tabla**, no una tarjeta: el nombre a la
+ * izquierda y las tecnologias a la derecha, separadas por un filete. Cuatro
+ * tarjetas con sombra convertirian cuatro listas cortas en cuatro objetos que
+ * compiten; en fila se leen de un vistazo y el ojo baja solo.
+ */
 const Skills = () => {
   const { t, pick } = useI18n();
 
   return (
-    <section id="skills" className="py-32 bg-primary-bg relative">
-      {/* Background subtle grid */}
-      <div className="grid-backdrop absolute inset-0 pointer-events-none"></div>
+    <section
+      id="skills"
+      aria-labelledby="skills-title"
+      className={`border-b border-line2 bg-secondary-bg ${SECTION_PADDING}`}
+    >
+      <div className={CONTAINER}>
+        <SectionHeading
+          section="skills"
+          title={t.skills.title}
+          id="skills-title"
+          className="mb-2"
+        />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <SectionTitle>{t.skills.title}</SectionTitle>
-
-        <div className="max-w-7xl mx-auto mt-20">
-          {/*
-            Los grupos se recorren desde los datos. Antes eran cuatro claves
-            fijas del tipo, asi que anadir una categoria obligaba a tocar el
-            tipo y el componente; ahora es solo una entrada mas en el archivo
-            de datos.
-          */}
-          <div className="flex flex-col gap-16">
-            {skillGroups.map((group, index) => (
-              <SkillCategory
-                key={index}
-                title={pick(group.category)}
-                items={group.skills}
-                delayOffset={0.1 + index * 0.1}
-              />
-            ))}
-          </div>
-        </div>
+        {skillGroups.map((group, index) => (
+          <motion.div
+            key={group.category.es}
+            {...rise(index)}
+            /*
+              Solo el fondo entra en la transicion. Con `transition-colors`
+              tambien entrarian el borde y el texto, y al cambiar de tema la
+              fila se quedaria a medio camino entre las dos paletas.
+            */
+            className="grid grid-cols-1 items-start gap-4 border-b border-line2 py-8 transition-[background-color] duration-[350ms] ease-editorial hover:bg-veil lg:grid-cols-[300px_1fr] lg:gap-10"
+          >
+            <h3 className="text-[13px] uppercase tracking-[0.14em] text-text-secondary">
+              {pick(group.category)}
+            </h3>
+            <ul className="flex flex-wrap gap-2.5">
+              {group.skills.map((skill) => {
+                // El modelo guarda la referencia al componente, no un elemento
+                // ya construido, asi que se instancia aqui.
+                const Icon = skill.icon;
+                return (
+                  <li
+                    key={skill.name}
+                    /*
+                      El chip se levanta 3px y cambia borde y color al pasar el
+                      cursor. No es interactivo —no lleva a ningun sitio— pero
+                      responder al puntero es lo que hace que la fila entera se
+                      sienta viva en vez de impresa.
+                    */
+                    className="group/chip flex items-center gap-2.5 rounded-sm border border-line2 bg-primary-bg px-4 py-2.5 text-sm text-text-secondary transition-all duration-[350ms] ease-editorial hover:-translate-y-[3px] hover:border-accent hover:text-text-primary"
+                  >
+                    <Icon
+                      size={17}
+                      aria-hidden="true"
+                      className="opacity-[0.55] transition-all duration-[250ms] group-hover/chip:text-accent group-hover/chip:opacity-100"
+                    />
+                    {skill.name}
+                  </li>
+                );
+              })}
+            </ul>
+          </motion.div>
+        ))}
       </div>
     </section>
   );

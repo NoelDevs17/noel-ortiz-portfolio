@@ -35,6 +35,23 @@
   --elevate: 255 255 255;
   /* Extremo del degradado del nombre en el Hero. */
   --peak: 255 255 255;
+
+  /*
+    Los tres filetes del rediseno editorial. No son colores nuevos: son el
+    mismo canal --hairline / --elevate a tres opacidades distintas, que es lo
+    que separa un borde visible de un divisor y de un velo de hover.
+
+    Viven como alfa suelta y no como color cerrado porque el canal ya se
+    invierte con el tema; lo unico que cambia entre oscuro y claro es cuanto
+    hay que subirla para que el filete se siga viendo sobre papel.
+
+      --line   borde visible (barra superior, reglas de seccion, botones)
+      --line2  filete divisorio (entre filas y secciones)
+      --veil   velo de composicion en el hover de una fila entera
+  */
+  --line-alpha: 0.14;
+  --line2-alpha: 0.06;
+  --veil-alpha: 0.04;
 }
 
 html.light {
@@ -60,13 +77,22 @@ html.light {
   --hairline: 0 0 0;
   --elevate: 0 0 0;
   --peak: 0 0 0;
+
+  /* Sobre papel el negro rinde menos que el blanco sobre tinta: sube un punto. */
+  --line-alpha: 0.16;
+  --line2-alpha: 0.07;
+  --veil-alpha: 0.03;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* This adds offset for the fixed navbar so content isn't hidden behind it */
-    scroll-padding-top: 100px;
+    /*
+      Reserva bajo la barra fija para que el titulo de la seccion no quede
+      debajo de ella al saltar por un ancla. Son los 68px de la barra mas aire.
+      Si cambia el alto de la cabecera, cambia esto.
+    */
+    scroll-padding-top: 92px;
   }
   body {
     @apply bg-primary-bg text-text-primary font-sans antialiased;
@@ -93,19 +119,70 @@ html.light {
 }
 
 /*
-  Rejilla de fondo de la seccion de tecnologias.
+  Rejilla de fondo del Hero.
 
-  Estaba escrita como un valor arbitrario con dos linear-gradient y rgba
-  blancos fijos, que sobre fondo claro desaparecian. Al vivir aqui puede usar
-  el token --hairline, que se invierte con el tema.
+  Dos linear-gradient de 1px cada 64px, recortados por una elipse desplazada
+  hacia la izquierda para que la rejilla se desvanezca antes de llegar al
+  titular. Vive aqui y no en un valor arbitrario de Tailwind por dos razones:
+  usa el token --hairline (un rgba blanco fijo desaparece sobre fondo claro) y
+  la mascara lleva porcentajes y comas que el parser de valores arbitrarios no
+  digiere.
 */
-.grid-backdrop {
+.hero-grid {
   background-image:
-    linear-gradient(rgb(var(--hairline) / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--hairline) / 0.04) 1px, transparent 1px);
-  background-size: 50px 50px;
-  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
-  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    linear-gradient(rgb(var(--hairline) / var(--line2-alpha)) 1px, transparent 1px),
+    linear-gradient(
+      90deg,
+      rgb(var(--hairline) / var(--line2-alpha)) 1px,
+      transparent 1px
+    );
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 60% at 25% 45%,
+    black 10%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(ellipse 70% 60% at 25% 45%, black 10%, transparent 70%);
+}
+
+/*
+  Estado final forzado del revelado al scroll.
+
+  La clase la pone `useRevealSafety` cuando comprueba que el documento no
+  compone fotogramas: alli `IntersectionObserver` no entrega y todo lo que
+  espera un `whileInView` se quedaria invisible. Ver la nota larga del hook.
+
+  El `!important` no es pereza: framer-motion escribe `opacity` y `transform`
+  como estilo en linea, y sin el la regla pierde. Va fuera de `@layer` para que
+  Tailwind la emita despues de las utilidades.
+
+  Solo alcanza a lo marcado con `data-reveal`, que son los elementos cuyo estado
+  inicial esconde contenido. Lo demas —el parallax del Hero, la barra de
+  progreso— puede quedarse quieto sin que se pierda nada.
+*/
+html.motion-frozen [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/*
+  Cambio de tema en circulo (ver useTheme.ts).
+
+  La View Transitions API funde las dos capturas por defecto; aqui el efecto es
+  otro: el tema nuevo se recorta en un circulo que nace del boton. Para eso hay
+  que anular ese fundido y dejar la captura nueva por encima de la vieja, que
+  se queda quieta de fondo.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 0;
+}
+::view-transition-new(root) {
+  z-index: 1;
 }
 
 /* Custom scrollbar */

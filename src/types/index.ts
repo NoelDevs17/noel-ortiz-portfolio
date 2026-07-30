@@ -79,13 +79,16 @@ export interface LanguageProficiency {
  */
 export type ProjectStatus = "production" | "in-progress" | "archived";
 
-/**
- * Gobernara los filtros y la etiqueta de la seccion de proyectos.
- * Todavia no lo renderiza nadie.
- */
+/** Etiqueta de la columna de metadatos de la tarjeta de proyecto. */
 export type ProjectCategory = "gubernamental" | "producto" | "freelance";
 
 export interface Project {
+  /**
+   * Clave estable del proyecto. Sirve de `key` en la lista y de nombre de la
+   * captura en `public/projects/`, asi que no depende del titulo: renombrar el
+   * proyecto no debe romper la imagen ni remontar la tarjeta.
+   */
+  slug: string;
   /** Nombre propio del proyecto: sin traducir. */
   title: string;
   tech: string[];
@@ -96,7 +99,11 @@ export interface Project {
   category: ProjectCategory;
   githubLink?: string;
   liveLink?: string;
-  /** `null` activa el marcador de posicion 800x500. */
+  /**
+   * Captura en `public/projects/`, proporcion 16:10 (1280x800 recomendado).
+   * `null` activa el marcador de posicion, que respeta la misma proporcion
+   * para que no haya salto de layout al sustituirlo.
+   */
   image: string | null;
 }
 

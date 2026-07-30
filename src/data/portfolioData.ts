@@ -23,6 +23,8 @@ import type {
   Localized,
   PersonalInfo,
   Project,
+  ProjectCategory,
+  ProjectStatus,
   SkillGroup,
 } from "../types";
 
@@ -254,8 +256,50 @@ export const languages: Localized<LanguageProficiency[]> = {
  * Vacio a proposito: la seccion no se publica hasta que haya contenido real.
  * En cuanto se anada aqui una entrada con titulo de verdad, la seccion y su
  * enlace en la navegacion vuelven solos, sin tocar ningun componente.
+ *
+ * `Projects.tsx` ya implementa la tarjeta completa del rediseno, incluidos los
+ * estados pendientes: un proyecto sin `githubLink` o sin `liveLink` pinta el
+ * boton con borde punteado en vez de esconderlo, y sin `image` cae en el
+ * marcador de posicion. Es decir, se puede anadir una entrada aqui sin tener
+ * todavia captura ni URLs, y la tarjeta lo declara en lugar de mentir.
+ *
+ * Forma de una entrada:
+ *
+ *   {
+ *     slug: "sistema-map",              // clave estable; nombra la captura
+ *     title: "Sistema institucional — MAP",
+ *     duration: "2025 —",
+ *     status: "production",             // production | in-progress | archived
+ *     category: "gubernamental",        // gubernamental | producto | freelance
+ *     tech: ["Angular", ".NET 8"],
+ *     description: { es: [...], en: [...] },   // 3-4 vinetas: contexto,
+ *                                              // tu aporte, resultado medible
+ *     githubLink: "https://…",          // opcional
+ *     liveLink: "https://…",            // opcional
+ *     image: "/projects/sistema-map.png",      // 16:10, o null
+ *   }
  */
 export const projects: Project[] = [];
+
+/**
+ * Etiquetas de `status` y `category`.
+ *
+ * Viven aqui y no en `i18n/translations.ts` porque su clave es el propio tipo
+ * del modelo: `Record<ProjectStatus, …>` obliga a que anadir un estado nuevo
+ * al tipo sea un error de compilacion hasta que se le escriba su rotulo en los
+ * dos idiomas. Desde translations.ts esa garantia se perderia.
+ */
+export const PROJECT_STATUS: Record<ProjectStatus, Localized> = {
+  production: { es: "En producción", en: "In production" },
+  "in-progress": { es: "En curso", en: "In progress" },
+  archived: { es: "Archivado", en: "Archived" },
+};
+
+export const PROJECT_CATEGORY: Record<ProjectCategory, Localized> = {
+  gubernamental: { es: "Gubernamental", en: "Government" },
+  producto: { es: "Producto", en: "Product" },
+  freelance: { es: "Freelance", en: "Freelance" },
+};
 
 /** Un proyecto es un marcador mientras su titulo empiece por "TODO". */
 const esMarcador = (proyecto: Project) =>
@@ -269,3 +313,60 @@ export const visibleProjects = projects.filter((p) => !esMarcador(p));
 
 /** Gobierna si la seccion existe y si aparece su enlace en la navegacion. */
 export const hasProjects = visibleProjects.length > 0;
+
+/**
+ * Fecha de inicio del empleo mas antiguo, leida de `duration`.
+ *
+ * Las duraciones se escriben "MM/AAAA - MM/AAAA" en todo el archivo. Se lee la
+ * primera mitad y se ordena; si alguna entrada no encajara en el formato, se
+ * ignora en vez de romper la pagina.
+ */
+function inicioDeCarrera(): Date | null {
+  const inicios = experience
+    .map((e) => /^(\d{2})\/(\d{4})/.exec(e.duration))
+    .filter((m): m is RegExpExecArray => m !== null)
+    // El indice 1 y 2 existen si el patron caso, pero `noUncheckedIndexedAccess`
+    // no lo sabe: `Number(undefined)` seria NaN, asi que se da un respaldo.
+    .map((m) => new Date(Number(m[2] ?? 0), Number(m[1] ?? 1) - 1, 1))
+    .sort((a, b) => a.getTime() - b.getTime());
+  return inicios[0] ?? null;
+}
+
+/** Anos completos desde el primer empleo. Se recalcula solo cada ano. */
+function anosEnProduccion(): number {
+  const inicio = inicioDeCarrera();
+  if (!inicio) return 0;
+  const ahora = new Date();
+  const meses =
+    (ahora.getFullYear() - inicio.getFullYear()) * 12 +
+    (ahora.getMonth() - inicio.getMonth());
+  return Math.max(0, Math.floor(meses / 12));
+}
+
+export interface Stat {
+  /** El texto que se cuenta. El sufijo no numerico se preserva ("4+"). */
+  value: string;
+  label: Localized;
+}
+
+/**
+ * Las tres cifras de "Sobre mi".
+ *
+ * Se derivan del propio modelo y no se escriben a mano: anadir una
+ * certificacion o un empleo actualiza la cifra sin que nadie tenga que
+ * acordarse. Una cifra escrita a mano es una cifra que se queda vieja.
+ */
+export const stats: Stat[] = [
+  {
+    value: `${anosEnProduccion()}+`,
+    label: { es: "Años en producción", en: "Years in production" },
+  },
+  {
+    value: String(experience.length),
+    label: { es: "Instituciones", en: "Institutions" },
+  },
+  {
+    value: String(certifications.length),
+    label: { es: "Certificaciones", en: "Certifications" },
+  },
+];
