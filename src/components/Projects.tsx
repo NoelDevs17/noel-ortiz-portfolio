@@ -1,11 +1,7 @@
 import { motion } from "framer-motion";
 import { FaGithub, FaPlay } from "react-icons/fa";
 import SectionHeading from "./SectionHeading";
-import {
-  PROJECT_CATEGORY,
-  PROJECT_STATUS,
-  visibleProjects,
-} from "../data/portfolioData";
+import { visibleProjects } from "../data/portfolioData";
 import { useI18n } from "../i18n/context";
 import { CONTAINER, SECTION_PADDING } from "../lib/layout";
 import { rise } from "../lib/motion";
@@ -32,8 +28,10 @@ interface ProjectRowProps {
 const ProjectRow = ({ project, index }: ProjectRowProps) => {
   const { t, pick } = useI18n();
 
-  const status = pick(PROJECT_STATUS[project.status]);
-  const category = pick(PROJECT_CATEGORY[project.category]);
+  // Nunca se pinta el valor crudo del modelo: pasa por los mapas del
+  // diccionario, que ya vienen resueltos al idioma activo.
+  const status = t.projects.status[project.status];
+  const category = t.projects.category[project.category];
 
   // El verde es el acento funcional del DESIGN.md: solo produccion. Cualquier
   // otro estado se queda en texto secundario.

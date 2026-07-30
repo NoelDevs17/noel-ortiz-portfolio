@@ -1,4 +1,42 @@
-import type { Language } from "../types";
+import type { Language, ProjectCategory, ProjectStatus } from "../types";
+
+/**
+ * Rotulos de `status` y `category` de un proyecto.
+ *
+ * Se anotan como `Record<…>` sobre el tipo del modelo, y no se dejan inferir
+ * como el resto del diccionario, para no perder la exhaustividad: anadir un
+ * estado nuevo a `ProjectStatus` pasa a ser un error de compilacion aqui hasta
+ * que se le escriba su rotulo. Y como la forma de `Ui` sale de estos mismos
+ * objetos, el ingles queda obligado a cubrir las mismas claves.
+ *
+ * El componente nunca pinta el valor crudo: siempre pasa por estos mapas.
+ */
+type ProjectStatusLabels = Record<ProjectStatus, string>;
+type ProjectCategoryLabels = Record<ProjectCategory, string>;
+
+const esProjectStatus: ProjectStatusLabels = {
+  production: "En producción",
+  "in-progress": "En curso",
+  archived: "Archivado",
+};
+
+const esProjectCategory: ProjectCategoryLabels = {
+  gubernamental: "Gubernamental",
+  producto: "Producto",
+  freelance: "Freelance",
+};
+
+const enProjectStatus: ProjectStatusLabels = {
+  production: "In production",
+  "in-progress": "In progress",
+  archived: "Archived",
+};
+
+const enProjectCategory: ProjectCategoryLabels = {
+  gubernamental: "Government",
+  producto: "Product",
+  freelance: "Freelance",
+};
 
 /**
  * Diccionario de la interfaz.
@@ -70,6 +108,8 @@ const es = {
      */
     shotAlt: "Captura de",
     stackAria: "Stack del proyecto",
+    status: esProjectStatus,
+    category: esProjectCategory,
   },
   experience: {
     title: "Trayectoria",
@@ -138,6 +178,8 @@ const en: Ui = {
     demoPending: "Demo pending: add the URL in liveLink",
     shotAlt: "Screenshot of",
     stackAria: "Project stack",
+    status: enProjectStatus,
+    category: enProjectCategory,
   },
   experience: {
     title: "Track record",
