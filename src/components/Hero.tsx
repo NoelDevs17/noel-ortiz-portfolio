@@ -135,7 +135,7 @@ const Typewriter = ({ texts }: TypewriterProps) => {
 };
 
 const Hero = () => {
-  const { t, pick } = useI18n();
+  const { t, pick, lang } = useI18n();
   const prefersReducedMotion = useReducedMotion();
   const motionOn = !prefersReducedMotion;
 
@@ -306,7 +306,12 @@ const Hero = () => {
                 ~$
               </span>
               <h2 className="text-[clamp(18px,2.2vw,26px)] font-medium text-text-secondary">
-                <Typewriter texts={pick(personalInfo.titles)} />
+                {/*
+                  key={lang}: al cambiar de idioma se remonta el Typewriter
+                  desde cero, en vez de intentar reiniciar su estado interno
+                  (que se quedaba borrando la frase anterior en el otro idioma).
+                */}
+                <Typewriter key={lang} texts={pick(personalInfo.titles)} />
               </h2>
             </motion.div>
 
