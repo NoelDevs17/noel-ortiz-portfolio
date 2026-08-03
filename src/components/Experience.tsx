@@ -130,7 +130,7 @@ const Experience = () => {
                   derecha. Es el mismo gesto de pasar el dedo por un indice: no
                   destaca la fila, senala donde estas.
                 */
-                className="group grid grid-cols-[44px_1fr_auto] items-baseline gap-5 border-t border-line2 py-3.5 transition-[background-color,padding-left] duration-300 ease-editorial hover:bg-veil hover:pl-3.5"
+                className="group grid grid-cols-[44px_1fr] items-baseline gap-5 border-t border-line2 py-3.5 transition-[background-color,padding-left] duration-300 ease-editorial hover:bg-veil hover:pl-3.5"
               >
                 <span
                   aria-hidden="true"
@@ -143,9 +143,6 @@ const Experience = () => {
                   {cert.institution && (
                     <span className="text-muted"> · {cert.institution}</span>
                   )}
-                </span>
-                <span className="whitespace-nowrap text-xs text-muted">
-                  {parseRange(cert.duration, t.experience.present).text}
                 </span>
               </motion.li>
             ))}

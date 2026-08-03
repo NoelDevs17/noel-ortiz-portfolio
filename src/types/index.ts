@@ -63,9 +63,6 @@ export interface Certification {
   title: string;
   /** Opcional: no todas las certificaciones registran la entidad. */
   institution?: string;
-  duration: string;
-  /** Opcional: solo las que siguen en curso lo declaran. */
-  status?: Localized;
 }
 
 export interface LanguageProficiency {

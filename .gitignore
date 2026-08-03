@@ -25,3 +25,6 @@ dist-ssr
 
 # Descargas de generadores de recursos (los archivos ya viven en public/)
 favicon.zip
+
+# Configuracion local de Claude Code (no versionar)
+.claude/

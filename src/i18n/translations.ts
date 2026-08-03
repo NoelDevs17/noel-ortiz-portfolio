@@ -71,12 +71,12 @@ const es = {
     progress: "Progreso de lectura",
   },
   hero: {
-    greeting: "Hola, me llamo",
+    greeting: "Hola, mi nombre es",
     cta: "Hablemos",
     /** Rotulos de la columna de metadatos (<dl>). */
     metaBase: "Base",
     metaFocus: "Enfoque",
-    metaFocusValue: "Gobierno y banca",
+    metaFocusValue: "Arquitectura y liderazgo técnico",
     metaStatus: "Estado",
     metaStatusValue: "Abierto a oportunidades",
     marqueeAria: "Tecnologías del stack",
@@ -156,7 +156,7 @@ const en: Ui = {
     cta: "Get in touch",
     metaBase: "Based in",
     metaFocus: "Focus",
-    metaFocusValue: "Government & banking",
+    metaFocusValue: "Architecture & tech leadership",
     metaStatus: "Status",
     metaStatusValue: "Open to opportunities",
     marqueeAria: "Stack technologies",
