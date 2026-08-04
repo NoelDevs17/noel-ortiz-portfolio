@@ -90,11 +90,9 @@ const Typewriter = ({ texts }: TypewriterProps) => {
   });
   const prefersReducedMotion = useReducedMotion();
 
-  // Idioma nuevo: vuelta al principio.
-  useEffect(() => {
-    setPhase({ index: 0, sub: 0, reverse: false });
-  }, [texts]);
-
+  // El reinicio al cambiar de idioma lo garantiza key={lang} en el padre, que
+  // remonta el componente entero desde cero. Por eso aqui no hace falta ningun
+  // efecto de reset: el remonte ya arranca con {index:0, sub:0, reverse:false}.
   useEffect(() => {
     if (prefersReducedMotion) return;
 
