@@ -1,205 +1,482 @@
 # Sistema de Diseño
 
-Documenta las decisiones visuales del portafolio tal como están implementadas en el código. Sirve como referencia al añadir secciones o componentes nuevos, para que mantengan coherencia con lo existente.
+Documento vivo del portafolio de Noel Ortiz. Recoge las decisiones tomadas y,
+sobre todo, **por qué**: una regla sin su motivo se rompe en cuanto estorba.
 
-## Concepto
+Los números de contraste que aparecen aquí están medidos, no estimados.
 
-**Estética de terminal / entorno de desarrollo.** El portafolio de un desarrollador debe parecerse a las herramientas que usa. De ahí vienen las decisiones que lo definen: tipografía monoespaciada para todo lo que es etiqueta o metadato, los tres puntos de ventana en la tarjeta del Hero, el logo `</>`, el nombre en `SNAKE_CASE` (`NOEL_ORTIZ`), la numeración de secciones (`01.`, `02.`…) y los patrones de rejilla sutiles de fondo.
+---
 
-La regla que sostiene el conjunto: **la mono etiqueta, la sans comunica**. Todo lo que sea navegación, estado, categoría o dato técnico va en JetBrains Mono; la prosa que se lee de corrido va en Inter.
+## Reglas operativas
+
+Las cinco reglas que gobiernan cualquier cambio. Si una decisión nueva choca con
+alguna, la que cede es la decisión.
+
+### 1. Criterio de tokenización
+
+> **Si un valor sustituye a un color de la paleta, se tokeniza. Si su trabajo es
+> oscurecer o aclarar lo que haya detrás, se queda como está.**
+
+Un `border-white/5` que hace de borde es paleta disfrazada: pasa a `hairline`.
+
+**El tema claro afinó esta regla.** La primera versión daba por buenos los
+velos de composición tal cual, pero un velo blanco solo aclara sobre fondo
+oscuro: sobre claro desaparece. Un valor que **depende del tema** es paleta,
+aunque parezca composición. De ahí salieron tres tokens nuevos:
+
+| Antes | Ahora | Por qué |
+|---|---|---|
+| `hover:bg-white/5` | `hover:bg-elevate/5` | Debe oscurecer sobre claro |
+| `via-white` | `via-peak` | El extremo del degradado se invierte |
+| Rejilla en `rgba(255,255,255,.02)` | Clase `.grid-backdrop` con `--hairline` | Las líneas blancas no existen sobre claro |
+
+Lo único que sobrevive crudo es `shadow-black/5`: las sombras parten de negro
+en los dos temas. **Prueba definitiva: si el valor tendría que cambiar al
+invertir el fondo, es un token.**
+
+### 2. Un único mecanismo de foco
+
+> **Nada de `focus:outline-none` por componente. El anillo global es el único
+> mecanismo.**
+
+Está definido una vez en `index.css` y **fuera de `@layer`**, para que gane a
+cualquier utilidad que intente anularlo. Si un componente necesita un foco
+distinto, se cambia la regla global, no se apaga la de ese componente.
+
+### 3. Nada estructural cuelga de un borde débil
+
+> **Ninguna estructura visual debe depender exclusivamente de un borde por
+> debajo de 3:1.**
+
+Ver [Superficies y bordes](#superficies-y-bordes).
+
+### 4. Las transiciones no tocan el foco
+
+> **Toda utilidad `transition-*` nueva debe excluir `outline-color`.**
+
+Un anillo de foco que se desvanece llega tarde a quien depende de él. `all` está
+redefinido en `tailwind.config.js` sin propiedades `outline-*`. Si algún día se
+añade otra clave a `transitionProperty`, hay que revisarla igual.
+
+### 5. Todo lo clicable es `<button>` o `<a>`
+
+> **Nada de `<div onClick>`. Y los `<a>` de `react-scroll` necesitan `href`
+> real, o quedan fuera del orden de tabulación.**
+
+`react-scroll` renderiza `<a>` sin `href` ni `tabindex`, y un ancla sin `href`
+no es focusable. Eso dejó la navegación principal completa inalcanzable con
+teclado: solo había 6 elementos focusables en toda la página. Cada `Link` lleva
+ahora su `href={"#" + id}`.
+
+Corolario: **todo control interactivo necesita nombre accesible**. Los enlaces
+que solo llevan icono usan `aria-label`.
+
+---
 
 ## Color
 
-El neutro es la escala **slate** de Tailwind, elegida sobre el gris puro por su leve sesgo azulado, que armoniza con el acento primario. No se usa `gray`, `zinc` ni `neutral` en ninguna parte.
+Una sola regla ordena la paleta:
 
-### Fondos y texto
+> **El azul es el único acento con peso. El verde es exclusivamente funcional.**
 
-| Rol | Oscuro | Claro |
-|---|---|---|
-| Fondo de página | `bg-slate-950` | `bg-slate-50` |
-| Texto principal | `text-slate-100` | `text-slate-900` |
-| Texto secundario | `text-slate-300` / `text-slate-400` | `text-slate-600` / `text-slate-700` |
-| Texto tenue (metadatos) | `text-slate-500` | `text-slate-500` |
-| Superficie de tarjeta | `bg-slate-900/30` – `/40` | `bg-white` |
-| Borde | `border-slate-800` / `border-slate-900` | `border-slate-200` |
+El azul marca lo que el usuario puede *hacer*: navegación, CTAs, enlaces y foco.
+El verde marca un *estado*, nunca una jerarquía visual.
 
-`text-slate-500` es deliberadamente el mismo valor en ambos temas: funciona sobre los dos fondos y evita una ternaria innecesaria.
+### Tokens
 
-### Acentos
+Ningún componente conoce el tema. Los valores son variables CSS declaradas en
+`src/index.css`: el oscuro en `:root` y el claro en `html.light`. Tailwind solo
+guarda el cableado.
 
-Una sola regla ordena todo el color del sistema:
-
-> **El azul es marca. El ámbar y el esmeralda son estado.**
-
-- **Azul** (`blue-600` claro / `blue-400` oscuro) — **marca, y no significa nada**. Identidad, navegación, numeración de secciones, CTAs, enlaces, *hover*, anillo de foco. Si un elemento es azul, es porque pertenece a la marca; nunca porque comunique una condición.
-- **Ámbar** (`amber-400` oscuro / `amber-700` claro) — **en curso**. Estudios y certificaciones sin terminar.
-- **Esmeralda** (`emerald-400` oscuro / `emerald-700` claro) — **completado o confirmado**. Titulaciones terminadas y el feedback de "copiado".
-
-En oscuro los acentos suben de escalón para conservar contraste sobre el fondo casi negro; en claro los estados bajan a `700` —no `600`— porque `amber-600` sobre `amber-50` da 3.07:1 y no alcanza el 4.5:1 exigido a texto.
-
-**La regla al añadir color:** si el elemento comunica una condición, usa ámbar o esmeralda; en cualquier otro caso, azul. Un estado nunca decora, y la marca nunca informa.
-
-Dos amarillos/verdes escapan a la regla por ser literales, no semánticos: el icono de sol del selector de tema, y el tercer punto del semáforo de ventana en el Hero, que es rojo/amarillo/verde por convención de sistema operativo.
-
-### Colores de marca
-
-[`src/constants/technologies.ts`](src/constants/technologies.ts) guarda el hex oficial de cada tecnología (`#3178c6` TypeScript, `#dd0031` Angular, `#512bd4` .NET…). Son datos de marca ajenos, así que quedan fuera del sistema y **no deben normalizarse** a la paleta. Cada badge define además su `text` y su `icon`.
-
-Esta lista es la fuente única de color de marca: la consumen tanto la marquesina de Skills como los chips de Projects. **Añadir una tecnología aquí la hace aparecer en ambas**, así que es también una declaración de competencias, no solo un color.
-
-**Al añadir un badge, elige el `text` midiendo, no a ojo.** El fondo es color de marca y no se toca, pero el texto es decisión nuestra y debe alcanzar 4.5:1 sobre ese fondo. La regla práctica: los fondos claros o saturados —cian, naranja, verde medio— piden `text-black`; los oscuros, `text-white`. Los 32 badges actuales cumplen, con el mínimo en 4.51:1.
-
-Cada entrada lleva además un `icon`, que sustituye al antiguo punto de color. Los logotipos de marca vienen de `react-icons/si` (Simple Icons); lo que no tiene logo cae en un icono de Lucide. **El icono no define color propio**: hereda el `text` del badge vía `currentColor`, de modo que el contraste se decide en un único sitio.
-
-Dos avisos al añadir iconos:
-
-- **Simple Icons no tiene marcas de Microsoft** (retiradas por política de marca registrada). SQL Server, Azure DevOps, Entity Framework y LINQ usan icono genérico, igual que gRPC, MassTransit y YARP.
-- **`SiSolid` existe, pero es SolidJS**, no los principios SOLID. Verifica que el logo corresponde a la tecnología antes de importarlo; el nombre coincidente no basta.
-
-### Superficies oscuras
-
-La escala slate salta de **L\* 1.9** (`slate-950`) a **L\* 8.0** (`slate-900`), sin escalones intermedios. Las superficies anidadas del tema oscuro necesitan ese rango, así que hay tres tokens propios declarados en `@theme`:
-
-| Token | Hex | L\* | Uso |
+| Token | Oscuro | Claro | Trabajo |
 |---|---|---|---|
-| `surface-card` | `#0b0c10` | 3.4 | Fondo de tarjeta sobre `slate-950` |
-| `surface-raised` | `#12141c` | 6.4 | Elemento elevado dentro de una tarjeta |
-| `surface-raised-hover` | `#1a1c29` | 10.6 | Estado *hover* del anterior |
+| `primary-bg` | `#0b0c0d` | `#f2f0e9` | Fondo base |
+| `secondary-bg` | `#17191d` | `#ffffff` | Superficie elevada: tarjetas y secciones alternas |
+| `text-primary` | `#f5f4ef` | `#121315` | Títulos y texto de peso |
+| `text-secondary` | `#9aa0a6` | `#55585d` | Párrafos y texto de apoyo |
+| `muted` | `#6b6e73` | `#7d8288` | Chrome no textual (scrollbar) |
+| `accent` | `#60a5fa` | `#185bd8` | Navegación, CTAs, enlaces, foco |
+| `success` | `#75f0c9` | `#047857` | **Solo** `Project.status === "production"` |
+| `hairline` | blanco 20% | negro 20% | Filete de refuerzo en bordes |
+| `elevate` | blanco | negro | Velo de composición en estados hover |
+| `peak` | blanco | negro | Extremo del degradado del nombre en el Hero |
 
-Se usan como cualquier color de Tailwind (`bg-surface-card`, `bg-surface-raised/50`). **No los sustituyas por `slate`**: colapsaría cuatro escalones de luminancia en dos y aplanaría la jerarquía de las tarjetas. Si necesitas un tono nuevo en ese rango, añade un token aquí en vez de un hex suelto.
+Se declaran como **canales RGB sueltos** (`96 165 250`), no como color cerrado,
+porque Tailwind necesita inyectar la opacidad: `bg-accent/10` compila a
+`rgb(var(--accent) / 0.1)`. Con un `#hex` todos los modificadores `/N` del
+proyecto se romperían.
+
+### Los dos azules
+
+`#60a5fa` sobre oscuro (7.70:1) y `#185bd8` sobre claro (5.22:1). **No son
+intercambiables:** `#185bd8` sobre `#0b0c0d` da 3.29:1 y no alcanza el 4.5:1 de
+texto; `#60a5fa` sobre `#f2f0e9` se lava. Cada uno solo funciona en su tema.
+
+El favicon usa un tercero, `#2563eb`, por una razón distinta: no vive sobre
+nuestro fondo sino sobre el cromo del navegador, que puede ser blanco o negro.
+`#60a5fa` sobre una pestaña clara da 2.54:1.
+
+### Por qué el verde está confinado
+
+El esmeralda del tema oscuro (`#75f0c9`) da **1.22:1 sobre el fondo claro**:
+invisible. Por eso en claro el verde funcional es oscuro (`#047857`, 4.81:1).
+
+Es exactamente el motivo por el que el verde no puede cargar con significado
+estructural: **es el único token que cambia de familia, no solo de luminosidad**,
+al cruzar de tema. Solo comunica estado, y siempre acompañado de texto.
+
+Si `success` aparece fuera de un badge de estado, es un error de revisión.
+
+### Las opacidades no se heredan entre temas
+
+Un modificador `/N` que cumple sobre oscuro **puede incumplir sobre claro**. Al
+bajar opacidad el texto se acerca al fondo, y el margen disponible no es el
+mismo en los dos temas. Dos casos reales encontrados al portar:
+
+| Uso | Oscuro | Claro |
+|---|---|---|
+| Tecnologías con `text-text-secondary/80` | 5.05:1 ✅ | **3.99:1 ❌** |
+| Pastilla con `text-accent/80` | 4.80:1 ✅ | **3.31:1 ❌** |
+
+Los dos se resolvieron quitando el modificador. **Regla: cualquier `/N` sobre
+texto se mide en los dos temas antes de darlo por bueno.**
+
+### Dos combinaciones al límite en el tema claro
+
+Cumplen, pero sin margen. **Cualquier cambio en esos fondos obliga a
+re-medirlas:**
+
+| Combinación | Ratio | Mínimo | Margen |
+|---|---|---|---|
+| Pastilla de fecha: `#185bd8` sobre `bg-accent/10` | **4.53:1** | 4.5 | 0.03 |
+| Verde funcional: `#047857` sobre `#f2f0e9` | **4.81:1** | 4.5 | 0.31 |
+
+Concretando lo que no se puede hacer sin volver a medir: subir la opacidad de
+la pastilla por encima de `/10`, oscurecer `primary-bg` en claro, o aclarar el
+verde funcional.
+
+---
+
+## Cómo se conmuta el tema
+
+Tres piezas:
+
+1. **Script de arranque en `index.html`.** Corre antes del bundle, lee la
+   elección guardada o la preferencia del sistema, pone la clase `light` y pinta
+   el fondo. Sin él el documento se queda blanco hasta que React monta, lo que
+   produce un fogonazo al entrar en oscuro.
+2. **`useTheme`.** Mantiene el estado, persiste en `localStorage`, conmuta la
+   clase, sincroniza `color-scheme` y reescribe el `<meta name="theme-color">`.
+3. **Las variables CSS.** Todo lo demás sale solo.
+
+La lógica de resolución está **duplicada a propósito** entre el script y el
+hook: aquel corre antes de que este módulo exista. Si cambia la clave de
+almacenamiento, la regla de respaldo o los dos colores de fondo, hay que
+cambiarlo en los dos sitios.
+
+Consecuencia de diseño que conviene apreciar: **ningún componente recibe el
+tema como prop**. No hay `isDark` viajando por el árbol; solo el conmutador del
+Navbar conoce el estado.
+
+---
+
+## Superficies y bordes
+
+`secondary-bg` está **5.4 puntos de L\* por encima** de la base en oscuro y
+**5.2 en claro** — el mismo salto perceptual en los dos temas, aunque en oscuro
+la superficie sube hacia el blanco y en claro también (de `#f2f0e9` a
+`#ffffff`).
+
+El ratio de contraste es mala guía aquí: la constante de reflexión de la fórmula
+WCAG comprime todas las diferencias entre casi-negros, y `#111315` frente a
+`#202225` apenas se separan en esa escala. **L\*, la luminosidad percibida,
+discrimina mucho mejor.** El salto elegido sitúa la superficie en la misma banda
+que `gray-900` de Tailwind (L\* 8.3) o `zinc-900` (L\* 8.4): todavía casi-negro,
+no gris.
+
+### Regla de dependencia estructural
+
+El filete `hairline` compone a `#45474a` sobre la superficie: **1.89:1**. Para
+llegar a 3:1 haría falta un blanco al 33% (`#606162`), que ya no se lee como
+filete sino como caja gris.
+
+De ahí la regla: **el borde refuerza, no sustituye**. Toda tarjeta, barra o panel
+debe distinguirse por su propia superficie, y usar el filete solo para definir el
+canto.
+
+> Prueba rápida: **si al quitar mentalmente el borde el elemento desaparece, lo
+> que hay que subir es la superficie.**
+
+Esto es exactamente lo que se corrigió al pasar `secondary-bg` de `#111315`
+(ΔL\* 2.5, invisible en pantallas de bajo contraste) a `#17191d`.
+
+WCAG 1.4.11 no exige 3:1 al filete porque ninguna información depende de él. Esa
+exención **solo se sostiene mientras se respete la regla de arriba**.
+
+---
 
 ## Tipografía
 
-Dos familias variables **alojadas en el propio proyecto**, importadas en [`src/main.tsx`](src/main.tsx) vía `@fontsource-variable` y declaradas como tokens en el `@theme` de [`src/index.css`](src/index.css):
+**JetBrains Mono para todo.** Es la decisión más característica del sistema: no
+hay una fuente para títulos y otra para texto. Se sirve self-hosted con
+`@fontsource-variable/jetbrains-mono`, importada en `main.tsx`. Cero peticiones a
+Google.
 
-```css
---font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
---font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-```
-
-**El sufijo `Variable` es obligatorio**: es el nombre con el que `@fontsource-variable` registra la familia. Sin él la página cae en silencio a fuentes del sistema, sin error visible. Los nombres planos quedan detrás como respaldo para copias instaladas localmente.
-
-**Inter** (100–900) para títulos y prosa. **JetBrains Mono** (100–800) para todo lo demás.
-
-Cada paquete declara todos sus subconjuntos, pero con `unicode-range`: el navegador **solo descarga el latino**, unos **87 KB** entre las dos familias. No hay ninguna petición a dominios externos.
-
-### Cuándo usar cada una
-
-`font-mono` va en: eyebrows de sección, ítems de navegación, etiquetas de campo, periodos y fechas, badges de tecnología, botones de acción, estados y el footer.
-
-`font-sans` va en: títulos `h1`–`h4`, párrafos del resumen, descripciones y viñetas de logros.
+Ojo: `font-sans` y `font-mono` resuelven **a la misma familia**. `font-mono` se
+usa como marcador semántico —etiquetas, fechas, datos— aunque hoy no produzca
+ningún cambio visual. Está anotado en la deuda.
 
 ### Escala
 
-| Uso | Clases |
+No es una escala modular estricta: son los pasos de Tailwind que el diseño usa.
+
+| Paso | Dónde |
 |---|---|
-| Nombre en el Hero | `text-4xl sm:text-6xl font-bold tracking-tight` |
-| Título de sección | `text-3xl font-bold tracking-tight` |
-| Título de tarjeta | `text-lg` / `text-xl font-bold` |
-| Prosa | `text-sm md:text-base leading-relaxed` |
-| Metadato mono | `text-xs` / `text-[11px]` |
-| Micro-etiqueta | `text-[10px]` / `text-[9px]` |
+| `text-8xl` / `7xl` / `5xl` | Nombre del Hero (responsivo) |
+| `text-7xl` / `5xl` | Texto fantasma de los títulos de sección |
+| `text-6xl` / `5xl` / `3xl` | Typewriter del Hero |
+| `text-4xl` / `3xl` | Títulos de sección y `h2` de Contacto |
+| `text-3xl` / `2xl` | Títulos de categoría de Skills |
+| `text-2xl` | Logo, `h3` de About, el "Hello!" |
+| `text-xl` | Puesto en Experiencia, institución en Educación |
+| `text-lg` | Texto de párrafo. El tamaño más usado |
+| `text-sm` / `xs` | Fechas, tecnologías, pie |
 
-Las etiquetas en mayúsculas llevan siempre `tracking-wider` o `tracking-widest`; los títulos grandes llevan `tracking-tight`. Sin esa compensación de interletraje, la mono en caja alta se apelmaza y los titulares se ven sueltos.
+Pesos: `font-bold` para títulos, `font-semibold` para subtítulos, `font-medium`
+para etiquetas, `font-light` en el párrafo de About.
 
-## Layout
+---
 
-**Contenedor:** `max-w-7xl mx-auto px-4 sm:px-6`, aplicado **sobre el propio `<section>`** —no sobre un `div` interno— para que el borde inferior y el contenido compartan ancho. El Header y el Footer repiten el mismo contenedor.
-**Ritmo vertical:** `py-16 md:py-24` en las siete secciones, con `border-b` entre ellas. Contact no lo lleva por ser la última antes del pie.
+## Layout y ritmo vertical
 
-**Numeración:** los eyebrows van de `01.` a `06.` (Hero no lleva número). Están escritos a mano en cada sección, así que **insertar una sección obliga a renumerar las siguientes** — y también a añadirla al `navItems` del Header y al `PrintOverlay`, que no heredan nada automáticamente.
+- **Ritmo de sección:** `py-24` (About, Experiencia) o `py-32` (Skills,
+  Proyectos, Contacto). El Hero ocupa `h-screen`. El pie, `py-8`.
+- **Contenedor:** `container mx-auto` con padding lateral `px-6`, que sube a
+  `lg:px-20` o `lg:px-12` según la sección.
+- **Anchos máximos:** `max-w-7xl` en Skills, `max-w-2xl` en Contacto (columna de
+  lectura estrecha, a propósito), `max-w-6xl` en la barra flotante.
+- **Barra de navegación:** fija, `w-[95%] max-w-6xl`, separada del borde
+  superior (`top-4`). Gana fondo translúcido, `backdrop-blur` y filete al pasar
+  de 50 px de scroll.
+- **`scroll-padding-top: 100px`** en `html`, para que los anclajes no queden
+  debajo de la barra fija. El mismo valor va como `offset={-100}` en
+  `react-scroll`. **Si cambia uno, cambia el otro.**
 
-**Patrón de dos columnas** — la estructura dominante (About, Experience, Projects, Contact):
+### Alternancia de fondos
 
-```
-grid grid-cols-1 lg:grid-cols-12 gap-12
-├─ lg:col-span-4  → barra lateral fija (lg:sticky lg:top-24 h-fit)
-└─ lg:col-span-8  → contenido
-```
+Las secciones alternan `primary-bg` y `secondary-bg` para marcar el ritmo. La
+alternancia es **posicional, no fija**: si una sección deja de publicarse, todas
+las siguientes invierten su turno.
 
-La barra lateral repite siempre la misma tríada: eyebrow con icono + número, título `h2`, subtítulo mono.
+Hoy solo Proyectos es condicional —se oculta mientras no haya proyectos
+reales—, así que Experiencia, Contacto y el pie reciben un prop `elevated`
+desde `App.tsx` en vez de llevar el fondo cableado.
 
-**Espaciado:** se usa `gap` de flex/grid y utilidades `space-y-*`, no márgenes por elemento. Mantenlo así — evita colapsos de margen y hace el ritmo predecible.
+Al invertir una sección **hay que invertir también sus tarjetas**, o quedarían
+del mismo color que su fondo: es la regla de dependencia estructural aplicada.
 
-### Radios
+Si en el futuro se vuelven condicionales más secciones, conviene calcular la
+paridad una sola vez en `App.tsx` en lugar de seguir añadiendo props sueltos.
 
-Escala progresiva según el tamaño del elemento: `rounded-lg` (botones, badges) → `rounded-xl` (tarjetas pequeñas) → `rounded-2xl` (tarjetas) → `rounded-3xl` (contenedores grandes) → `rounded-full` (píldoras de tecnología, campo de búsqueda).
+---
 
-### Sombras
+## Componentes recurrentes
 
-Muy contenidas y casi exclusivas del tema claro (`shadow-xs`, `shadow-sm`), donde sustituyen al borde como separador. En oscuro la profundidad la da el contraste de superficies, no la sombra.
+### Tarjeta
 
-## Tema claro / oscuro
+`bg-secondary-bg` (o `bg-primary-bg/80` con `backdrop-blur` en Experiencia),
+`border border-hairline`, `rounded-md`, `p-6`. Al pasar el ratón, el borde vira a
+`accent/30` y el título a `accent`, coordinados con `group-hover`.
 
-La implementación **no usa la clase `dark:` de Tailwind ni variables CSS**. Un booleano `isDark` viaja por props desde [`App.tsx`](src/App.tsx) y cada componente resuelve sus clases con una ternaria:
+### Título de sección con texto fantasma
 
-```tsx
-className={`... ${isDark ? "bg-slate-900/40 border-slate-800" : "bg-white border-slate-200"}`}
-```
+Dos capas del mismo texto: la de delante en `accent`, y detrás una copia mucho
+mayor en `text-text-primary opacity-[0.06]`, centrada en términos absolutos.
 
-Es verboso, pero explícito: ambos temas se leen juntos en el mismo punto del código. **Si añades un componente, sigue este patrón** en lugar de introducir un segundo mecanismo.
+El fantasma **debe ser un texto claro con opacidad muy baja**, no un color
+sólido oscuro. Antes usaba `text-secondary-bg`, y al subir la superficie se
+volvió invisible: el fantasma dependía de que la superficie fuera casi idéntica
+al fondo.
 
-### Arranque y persistencia
+### Pastilla de dato
 
-El fondo de página se decide **antes de que cargue el bundle**, en un script en línea dentro de `index.html`. Sin él la página queda blanca hasta que React monta, lo que produce un destello en tema oscuro.
+`text-accent/80` sobre `bg-accent/10`, `px-3 py-1`, `rounded-md`, `font-mono
+text-sm`. Para fechas y periodos. Compuesta da 4.80:1 — pasa, pero **con poco
+margen: no bajar más la opacidad del texto**.
 
-Orden de precedencia, idéntico en el script y en [`useTheme.ts`](src/hooks/useTheme.ts):
+### Etiqueta / tag
 
-1. La elección guardada en `localStorage` (`theme`).
-2. `prefers-color-scheme` — **oscuro salvo que el sistema pida claro explícitamente**, para conservar la identidad oscura del sitio cuando no hay preferencia.
-3. El parámetro `initial` del hook, solo si `matchMedia` no existe.
+`border border-text-secondary/20`, `rounded-full`, `px-6 py-2`. Para
+competencias. Al pasar el ratón el borde vira a `accent`.
 
-[`useLanguage.ts`](src/hooks/useLanguage.ts) sigue el mismo patrón con la clave `lang`, cayendo en `navigator.language`: inglés si el navegador lo es, español en cualquier otro caso. No necesita script de arranque porque el idioma no afecta al color del primer pintado.
+### Botones
 
-**Esa lógica está duplicada a propósito** entre el script y el hook: el script corre antes de que exista el módulo. Si cambias la clave de almacenamiento, la regla de precedencia o los dos colores de fondo, cámbialos en ambos sitios — hay un comentario en cada uno apuntando al otro.
+Dos variantes, ambas de contorno; **no hay botón de relleno sólido en reposo**:
 
-Dos detalles que conviene no romper:
+- **CTA principal** (Contacto): `border-2 border-accent text-accent`, con
+  `hover:bg-accent/10` y elevación de 1 px.
+- **Acción de barra** (RESUME): `border border-accent`, y al pasar el ratón
+  **invierte** a `bg-accent text-primary-bg` (7.70:1).
 
-- **El `try` envuelve solo la lectura de `localStorage`**, nunca el pintado. En modo privado el almacenamiento lanza excepción; si el `catch` se tragara también el `matchMedia` y el pintado, el destello volvería.
-- El hook **reescribe el fondo de `<html>` en cada cambio de tema**, no solo al arrancar, para que el área de *overscroll*, la barra de desplazamiento y los controles nativos no se queden con el color que pintó el script.
+### Línea temporal
+
+Línea vertical con degradado `from-accent via-accent/40 to-transparent` al 30% de
+opacidad, y punto con `border-accent` y halo `rgba(96,165,250,.8)`. Las tarjetas
+alternan lado en escritorio y se apilan a la izquierda en móvil.
+
+### Badge de estado *(pendiente)*
+
+El único sitio donde debe aparecer `success`. Entra con el contenido real, en la
+Fase D. Va siempre acompañado de texto: el color no puede ser el único portador
+del significado.
+
+---
 
 ## Movimiento
 
-Se usa [Motion](https://motion.dev) con moderación, en tres lugares:
+### Patrones
 
-1. **Rotación de títulos en el Hero** — `AnimatePresence mode="wait"`, desplazamiento vertical ±20px, 0.3s, cada 4s.
-2. **Menú móvil** — despliegue de altura `0 → auto`.
-3. **Marquesinas de tecnologías** — CSS puro, no Motion. Dos keyframes (`marquee` y `marquee-reverse`) definidos en `@theme`, 110s lineales infinitos, en direcciones opuestas. Las listas se triplican en el JSX para que el bucle no muestre costuras, y unos degradados laterales difuminan los extremos.
+| Patrón | Valores |
+|---|---|
+| Entrada por scroll | `initial={{opacity:0, y:20}}` → `whileInView`, `viewport={{once:true}}`, 0.5–0.6 s |
+| Escalonado en listas | `delay: index * 0.1` |
+| Entrada de la barra | `y:-100` → `0`, 0.8 s, `easeOut` |
+| Bucles de fondo | Blobs del Hero a 10 s y 12 s, `easeInOut`, `repeat: Infinity` |
+| Hover de tarjeta | `whileHover={{scale:1.05, y:-5}}` |
+| Transiciones CSS | `duration-300` por defecto; 500–700 ms en superposiciones e imágenes |
 
-Las transiciones de estado usan `transition-all` / `transition-colors` con la duración por defecto; el cambio de tema usa `duration-300`. Los *hover* elevan con `hover:-translate-y-0.5` o `hover:scale-[1.03]`, nunca más.
+`viewport={{ once: true }}` en todas las entradas: **la animación se dispara una
+vez**. Repetirla al volver a pasar convierte el scroll en un espectáculo y
+cansa.
 
-## Vista de impresión
+### Movimiento reducido, en tres capas
 
-El CV en PDF no es una hoja de estilos alternativa sino un **componente separado**: [`PrintOverlay.tsx`](src/components/print/PrintOverlay.tsx).
+Ninguna cubre a las otras dos:
 
-- Todas las secciones de pantalla llevan `print:hidden`.
-- El overlay lleva `hidden print:block` y fuerza `text-slate-950 bg-white`, ignorando el tema activo.
-- Maqueta densa de una columna, `text-xs`, con `page-break-inside-avoid` en los bloques que no deben partirse.
-- Consume la misma data e idioma que la web, así que se mantiene sincronizado solo.
+| Capa | Qué cubre |
+|---|---|
+| `<MotionConfig reducedMotion="user">` | Todo framer-motion. Desactiva transformaciones y deja pasar la opacidad, que no marea |
+| `@media (prefers-reduced-motion: reduce)` | Animaciones CSS de Tailwind (`animate-pulse`), transiciones de hover, scroll suave |
+| Rama explícita en `Typewriter` | El efecto de escritura, que es JS con temporizadores y no lo alcanza ninguna de las anteriores |
 
-Si añades una sección al sitio, decide explícitamente si entra en el CV: no se propaga automáticamente.
+Con movimiento reducido el `Typewriter` pinta la primera frase completa y sin
+cursor: **el contenido no se pierde, solo deja de moverse**. Y no programa ningún
+temporizador, en vez de programarlos y ocultar el resultado.
 
-## Detalles recurrentes
+---
 
-**Patrón de rejilla de fondo.** Dos degradados lineales de 1px a `currentColor`, con `backgroundSize` de 20px (Contact) o 24px (Skills), a opacidad 0.02–0.05. Va en un `div` absoluto con `pointer-events-none` y el contenido se eleva con `relative z-10`.
+## Foco y teclado
 
-**Foco de teclado.** Regla global en `index.css`: `outline: 2px solid #3b82f6` con `outline-offset: 2px`. Como el tema vive en una prop de React y no en una clase sobre `<html>`, el anillo no puede cambiar según el tema, así que se usa `blue-500` — el único acento que supera el 3:1 de contraste no textual (WCAG 2.1 SC 1.4.11) sobre **ambos** fondos: 5.48:1 sobre `slate-950` y 3.52:1 sobre `slate-50`. (`emerald-500`, el otro candidato, se queda en 2.48:1 sobre el fondo claro.)
+```css
+:focus-visible {
+  outline: 2px solid theme(colors.accent);
+  outline-offset: 3px;
+}
+```
 
-`transition-all` y `transition-colors` de Tailwind 4 incluyen `outline-color` en su lista de propiedades, lo que haría que el anillo se fundiera desde el color de texto del elemento en vez de aparecer a plena intensidad. Ambas utilidades se redeclaran en `index.css` sin esa propiedad. **Si añades una utilidad `transition-*` nueva, exclúyela también ahí.**
+- **Fuera de `@layer`**: Tailwind emite lo no estratificado después de las
+  utilidades, así que esta regla gana a cualquier `focus:outline-none`.
+- **`:focus-visible`, no `:focus`**: el anillo aparece al navegar con teclado, no
+  al hacer clic.
+- El azul da 7.70:1 sobre la base y 6.92:1 sobre la superficie: muy por encima
+  del 3:1 exigido a un componente.
 
-Corolario: **todo elemento clicable debe ser un `<button>` o un `<a>`**, nunca un `div` con `onClick`. Un `div` no recibe foco, así que el anillo jamás aparecería sobre él y el teclado no podría activarlo.
+Recorrido verificado con pulsaciones reales de Tab: **11 paradas en ciclo
+completo**, todas con anillo y con nombre accesible.
 
-Este anillo es el **único** mecanismo de foco del proyecto: no añadas `focus:outline-none` con anillos propios por componente, ni siquiera en campos de formulario.
+Al redefinir `transitionProperty.all` hubo que conservar `width` y `height`: el
+subrayado de la navegación anima su ancho, y copiar la lista por defecto de
+Tailwind sin más lo habría roto en silencio.
 
-**Scrollbar.** Personalizado a 6px con pulgar `slate-400` translúcido, definido en `index.css`.
+---
 
-**Iconos.** [Lucide](https://lucide.dev), a `w-3.5`, `w-4` o `w-5` según jerarquía. Nunca emoji como marcador de sección — chocaría con la estética de terminal.
+## Recursos
 
-**Scroll de navegación.** [`scroll.ts`](src/utils/scroll.ts) calcula el desplazamiento restando la altura real de la cabecera fija más 16px de margen. Usa siempre este helper en vez de `scrollIntoView`, o el destino queda tapado por la cabecera.
+- **Favicon:** N de barras blanca sobre `#2563eb`. Las barras se engrosaron de 46
+  a 76 unidades sobre un lienzo de 512 porque a 16 px medían 1.4 px y la letra no
+  se leía. Paquete: SVG, PNG de 16/32/180/192/512 y `.ico` con 16+32+48.
+- **Open Graph:** `og-image.png` de 1200×630. Base `#0b0c0d`, barra de acento
+  azul, nombre y titular. Referenciada con **URL absoluta**: las redes no
+  resuelven rutas relativas.
+- **Marcador de proyecto:** `project-placeholder.svg` local, 800×500, con la
+  paleta. El `<img>` declara `width` y `height` para reservar el hueco y evitar
+  el salto de layout al llegar las capturas reales.
+- **Cero dominios externos.** Verificado sobre el build de producción. Cualquier
+  recurso nuevo se sirve desde el propio origen.
+
+### El CV es un archivo estático, mantenido a mano
+
+`public/cv-noel-ortiz.pdf`. **No se genera desde los datos del sitio.** Se
+descartó a propósito la vista de impresión que producía el CV a partir de
+`data.ts`: el CV lo mantiene Noel y lo reemplaza cuando toca.
+
+> ⚠️ **Esto significa que el sitio y el CV pueden divergir sin que nada avise.**
+> Cada vez que cambien las experiencias, las certificaciones o la formación en
+> `src/data/portfolioData.ts`, **hay que regenerar y reemplazar el PDF**. No hay
+> comprobación automática que lo detecte.
+
+Reglas del archivo:
+
+- **El nombre no cambia.** `cv-noel-ortiz.pdf` es la ruta estable; sustituir el
+  contenido, no crear `cv-v2.pdf`.
+- **La ruta vive en `personalInfo.resumeLink`**, no cableada en el Navbar. Los
+  dos botones (escritorio y móvil) leen de ahí, así que no pueden
+  desincronizarse. En el proyecto original estaba escrita a mano en los dos.
+- Los enlaces llevan `download`, `target="_blank"` y `rel="noopener"`.
+- Hoy hay un **marcador de posición** en esa ruta para que el enlace no dé 404.
+  Se nota al abrirlo: lo dice en la primera línea.
+
+---
 
 ## Deuda conocida
 
-Ninguna pendiente. Las entradas anteriores —grises sin token, fuentes en CDN, ausencia de foco de teclado, contraste de los badges, pesos sintetizados y caracteres fuera del subconjunto latino— están todas cerradas.
+### Contenido
 
-Al añadir deuda aquí, anota el dato que la hace verificable (el contraste medido, el peso que falta), no solo la descripción: así se comprueba si sigue viva sin volver a investigarla.
+- **Los proyectos siguen siendo un marcador.** Todo lo demás —perfil,
+  experiencia, formación, certificaciones, idiomas y tecnologías— ya es
+  contenido real. Los proyectos se trabajan aparte, con sus capturas.
+- **El texto fantasma de los títulos duplica el contenido en el DOM.** Lleva
+  `aria-hidden`, así que los lectores de pantalla ya no lo anuncian, pero sigue
+  siendo un nodo de texto repetido.
 
+### Inconsistencias del sistema
+
+- **Radios sin criterio.** Conviven `rounded-md` (el dominante), `rounded-xl` en
+  una sola tarjeta, `rounded` a secas en los botones RESUME y `rounded-full` en
+  pastillas. Habría que reducirlo a dos o tres.
+- **Padding lateral inconsistente.** `lg:px-20`, `lg:px-12` y `lg:px-8` conviven
+  sin razón aparente.
+- **`font-mono` no hace nada visualmente**, porque `font-sans` resuelve a la
+  misma familia. Es semántico y está bien, pero conviene saberlo antes de
+  intentar depurar por qué no cambia nada.
+- **El fantasma de los títulos es puramente decorativo y duplica el texto en el
+  DOM.** Los lectores de pantalla anuncian el título dos veces. Debería llevar
+  `aria-hidden`.
+
+### Limitaciones aceptadas
+
+- **El conmutador de tema en vivo no se pudo verificar automaticamente.** Ambos
+  temas se comprobaron correctos tras recargar, pero al conmutar sin recarga el
+  panel de navegador devolvía valores obsoletos. Diagnosticado: la pestaña
+  estaba en `visibilityState: "hidden"` y `requestAnimationFrame` no llegaba a
+  ejecutarse, así que el motor congela el recálculo de estilos. Se descartó que
+  fuera del código: escribir la variable como estilo en línea sobre `<html>`
+  tampoco recalculaba. Conviene confirmarlo a ojo en un navegador real.
+- **La pastilla de fecha en claro pasa con poco margen** (4.53:1 frente al 4.5
+  exigido). No bajar la opacidad de ese texto ni oscurecer su fondo.
+
+- **El filete no llega a 3:1** (1.89:1). Aceptado bajo la regla de dependencia
+  estructural, pero hay que revisarlo si algún componente se queda sin superficie
+  propia.
+- **La imagen Open Graph no usa JetBrains Mono, sino Consolas.** Se intentó
+  apuntar `sharp` al `woff2` de `@fontsource` descomprimiéndolo a TTF y sirviendo
+  un `fontconfig` propio; el librsvg que embebe `sharp` en Windows **ignora
+  `FONTCONFIG_FILE`** — los renders con la fuente y con un nombre inexistente
+  salen byte a byte idénticos. Sin instalar la fuente en el sistema no hay vía
+  limpia. Consolas mantiene el carácter monoespaciado.
+- **Movimiento reducido verificado solo estáticamente.** Se comprobó que las tres
+  capas existen y que la regla `@media` llega a la hoja servida, pero no se pudo
+  forzar la preferencia del sistema para observarlo en vivo.
+- **`react-scroll` sigue siendo una dependencia con aristas.** El `href` resuelve
+  la tabulación, pero la librería mantiene su propio estado de scroll. Si alguna
+  vez estorba, sustituirla por `scrollIntoView` nativo es un cambio pequeño.

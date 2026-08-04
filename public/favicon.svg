@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Noel Ortiz">
+  <rect width="512" height="512" rx="96" fill="#2563eb"/>
+  <rect x="80" y="100" width="76" height="312" rx="10" fill="#ffffff"/>
+  <rect x="356" y="100" width="76" height="312" rx="10" fill="#ffffff"/>
+  <path d="M156 100 L356 412 L356 282 L156 182 Z" fill="#ffffff"/>
+</svg>
