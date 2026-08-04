@@ -73,9 +73,12 @@ const About = () => {
           </div>
 
           <div>
-            {paragraphs.map((paragraph) => (
+            {paragraphs.map((paragraph, index) => (
+              // key por indice, no por texto: al cambiar de idioma el parrafo
+              // debe persistir (no remontar) para que RevealLines lo remida sin
+              // volver a esconderlo. Ver la nota larga de RevealLines.
               <RevealLines
-                key={paragraph}
+                key={index}
                 text={paragraph}
                 className="mb-[26px] text-[17px] font-light leading-[1.8] text-text-secondary [text-wrap:pretty]"
               />

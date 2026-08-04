@@ -43,14 +43,15 @@ const splitWords = (text: string) => text.trim().split(/\s+/).filter(Boolean);
  * 1. El texto integro se guarda en `data-plain`. Al partirlo, el DOM queda
  *    troceado en spans y un rastreador leeria fragmentos sueltos; el atributo
  *    conserva la frase entera.
- * 2. El estado oculto solo existe *despues* de medir, y siempre con un
- *    `whileInView` que garantiza el estado final. Mientras no se ha medido, el
- *    parrafo esta visible y completo: si algo fallara, el peor resultado es un
- *    parrafo sin animar, nunca un hueco en blanco.
+ * 2. El estado oculto solo existe en la *primera* medicion —la de entrada— y
+ *    siempre con un `whileInView`; si ese revelado no llegara a dispararse,
+ *    `useRevealSafety` fuerza el estado final. En las remediciones posteriores
+ *    (idioma, ancho, fuente) no se esconde nada: el parrafo pasa directo al
+ *    texto nuevo, asi que nunca queda un hueco en blanco.
  * 3. Se vuelve a medir al cambiar el idioma (texto nuevo), el ancho o la fuente
- *    —una fuente que carga tarde mueve todos los cortes—, pero solo el cambio
- *    de idioma vuelve a animar: reanimar al redimensionar la ventana seria un
- *    parpadeo sin motivo.
+ *    —una fuente que carga tarde mueve todos los cortes—, pero ninguna reanima:
+ *    el revelado corre una sola vez, en la entrada. Al cambiar de idioma el
+ *    texto nuevo aparece directo en su estado final (ver la rama de abajo).
  */
 const RevealLines = ({ text, className = "", delay = 0 }: RevealLinesProps) => {
   const ref = useRef<HTMLParagraphElement>(null);
@@ -63,8 +64,16 @@ const RevealLines = ({ text, className = "", delay = 0 }: RevealLinesProps) => {
   // Texto nuevo (cambio de idioma): se descarta el corte anterior en el mismo
   // render, sin pasar por un efecto. Es el patron de estado derivado de React y
   // no puede ciclar: tras el `setMeasured(null)` ya no hay medicion que sobre.
+  //
+  // No se reanima (`animate: false`). El parrafo ya esta en pantalla; volver a
+  // esconderlo para revelarlo dependeria de que `whileInView` se disparara otra
+  // vez sobre un elemento que nunca sale de vista, y cuando no lo hace el texto
+  // se queda en opacidad 0 y la seccion aparece vacia. Con el corte nuevo naciendo
+  // en su estado final, el texto traducido aparece directo. Requiere que el
+  // componente persista entre idiomas: quien lo usa en lista lo monta con `key`
+  // por indice, no por texto, para no remontar y que esta rama llegue a correr.
   if (measured && measured.text !== text) {
-    animateNext.current = true;
+    animateNext.current = false;
     setMeasured(null);
   }
 
